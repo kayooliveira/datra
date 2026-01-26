@@ -1,50 +1,97 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: unversioned template → 1.0.0
+- Modified principles: N/A (template placeholders replaced)
+- Added sections: Core Principles (filled), Architecture & Tech Stack, Development Workflow, Governance (filled)
+- Removed sections: None
+- Templates requiring updates:
+	- ✅ .specify/templates/plan-template.md
+	- ✅ .specify/templates/tasks-template.md
+	- ⚠️ .specify/templates/commands/*.md (directory not present in this repo)
+- Deferred items:
+	- TODO(RATIFICATION_DATE): Original constitution ratification date unknown
+-->
+
+# Datra Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. IDE-Style UX (Database Manager)
+Datra is a desktop database manager. The UI MUST follow an IDE-style layout inspired by tools like
+DBeaver and HeidiSQL: resizable panes, a left-side navigation tree, a primary editor/worksheet area,
+and a bottom results/logs area.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+User workflows MUST be discoverable, keyboard-friendly, and consistent (tabs, context menus,
+shortcuts, and view switching behave predictably).
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+Rationale: A database manager succeeds on workflow efficiency and familiar interaction patterns.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Security First
+All inputs (UI fields, imported files, DB responses, connection strings) MUST be treated as
+untrusted. Secrets MUST NOT be logged. Credentials MUST be stored using OS-appropriate secure
+storage when added (Keychain/Credential Manager/etc.), or not stored at all.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Any feature that executes SQL MUST make execution intent explicit (e.g., separate “Run” vs “Save”,
+clear connection context, and confirmation for destructive operations when reasonable).
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: Database tools handle sensitive data and high-impact operations.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Performance & Responsiveness
+The app MUST remain responsive during long operations (connection, schema loading, query
+execution). Heavy work MUST run off the UI thread, with cancellation where feasible and progressive
+feedback (loading state, progress, or partial results).
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Rationale: Perceived performance is a core part of the UX for an IDE-style tool.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### IV. Developer Productivity & Maintainability
+Prefer clear, incremental changes that keep the app buildable at all times. Non-trivial logic MUST
+be testable and covered by tests (at least unit tests for Go domain logic). UI-heavy work MUST
+include a manual verification checklist.
+
+New dependencies MUST be justified and kept minimal.
+
+Rationale: Fast iteration and reliability require disciplined engineering practices.
+
+### V. Clear Go/React Boundaries
+Business logic and system integration MUST live in Go. React is responsible for presentation and
+UI state. All cross-boundary calls MUST go through Wails bindings with explicit input/output shapes.
+
+Rationale: Prevents duplicated logic and keeps the architecture understandable.
+
+## Architecture & Tech Stack
+
+- App type: Desktop database manager
+- Backend: Go (module: `datra`, currently Go 1.23)
+- Desktop framework: Wails v2
+- Frontend: React + Vite under `frontend/`
+- UX layout expectation: IDE-style multi-pane workspace with tabs and resizable splits
+
+Constraints:
+- Avoid blocking the UI thread.
+- Data crossing Go/React boundary MUST be validated and schema/versioned when persisted.
+- Logging MUST be structured and MUST redact secrets.
+
+## Development Workflow
+
+- PRs MUST include a short description, manual verification steps, and security/performance impact.
+- Go changes MUST run `go test ./...` locally or in CI.
+- Frontend changes MUST run the configured lint/build/test commands when present.
+- If a PR violates a principle, it MUST include an explicit exception rationale and mitigation.
 
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes local conventions and ad-hoc practices.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments:
+- Any change MUST be proposed in a PR.
+- The PR MUST explain motivation, expected impact, and any migration needed.
+- Versioning policy is Semantic Versioning:
+	- MAJOR: backward-incompatible governance changes or principle removals/redefinitions
+	- MINOR: new principle/section or materially expanded guidance
+	- PATCH: clarifications, typo fixes, non-semantic refinements
+
+Compliance review:
+- Reviewers MUST check PRs for constitution compliance.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): Original adoption date unknown | **Last Amended**: 2026-01-26
