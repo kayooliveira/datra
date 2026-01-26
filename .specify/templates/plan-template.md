@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] IDE UX: feature fits the IDE-style multi-pane layout; keyboard-friendly where relevant
+- [ ] Security: inputs validated; secrets not logged; destructive actions have safe UX
+- [ ] Performance: long-running work is async; UI remains responsive; cancellation/feedback considered
+- [ ] Productivity: changes are incremental; non-trivial logic has tests; UI changes include manual checks
+- [ ] Architecture: Go owns business logic; Wails boundary uses explicit request/response shapes
 
 ## Project Structure
 

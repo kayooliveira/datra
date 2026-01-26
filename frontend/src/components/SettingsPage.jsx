@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { XIcon, MoonIcon, SunIcon, GlobeIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 function SettingsPage({ onClose }) {
-  const { settings, updateSettings, t } = useSettings();
+  const { settings, updateSettings } = useSettings();
+  const { t } = useTranslation();
 
   return (
     <div className="settings-page">

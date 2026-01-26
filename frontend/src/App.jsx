@@ -4,12 +4,14 @@ import { EventsOn } from "../wailsjs/runtime/runtime";
 import EmptyState from "./components/EmptyState";
 import SettingsPage from "./components/SettingsPage";
 import { useSettings } from "./contexts/SettingsContext";
+import { useTranslation } from "react-i18next";
 
 function App() {
   const [connections, setConnections] = useState([]);
   const [loadingConnections, setLoadingConnections] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
-  const { t, platformModifier } = useSettings();
+  const { platformModifier } = useSettings();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchConnections();

@@ -1,33 +1,33 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { GetSettings, SaveSettings, UpdateMenu, GetPlatform } from '../../wailsjs/go/main/App';
-import en from '../translations/en.json';
-import pt from '../translations/pt.json';
+import { useTranslation } from 'react-i18next';
 
 const SettingsContext = createContext();
-
-const translations = { en, pt };
 
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState({ language: 'en', theme: 'light' });
   const [loading, setLoading] = useState(true);
   const [platform, setPlatform] = useState('windows');
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const init = async () => {
       const savedSettings = await GetSettings();
       const currentPlatform = await GetPlatform();
       
-      setSettings(savedSettings || { language: 'en', theme: 'light' });
+      const initialSettings = savedSettings || { language: 'en', theme: 'light' };
+      setSettings(initialSettings);
       setPlatform(currentPlatform || 'windows');
       setLoading(false);
       
-      if (savedSettings?.language) {
-        UpdateMenu(savedSettings.language);
+      if (initialSettings.language) {
+        i18n.changeLanguage(initialSettings.language);
+        UpdateMenu(initialSettings.language);
       }
     };
     
     init();
-  }, []);
+  }, [i18n]);
 
   useEffect(() => {
     document.body.setAttribute('data-theme', settings.theme);
@@ -39,36 +39,22 @@ export const SettingsProvider = ({ children }) => {
     await SaveSettings(updated);
     
     if (newSettings.language) {
+      i18n.changeLanguage(newSettings.language);
       UpdateMenu(newSettings.language);
     }
-  }, [settings]);
+  }, [settings, i18n]);
 
   const platformModifier = useMemo(() => {
     if (platform === 'darwin') return '⌘';
     return 'Ctrl';
   }, [platform]);
 
-  const t = useCallback((key) => {
-    const keys = key.split('.');
-    let value = translations[settings.language];
-    
-    for (const k of keys) {
-      if (value[k] === undefined) {
-        return key;
-      }
-      value = value[k];
-    }
-    
-    return value;
-  }, [settings.language]);
-
   const value = useMemo(() => ({
     settings,
     updateSettings,
-    t,
     platformModifier,
     loading
-  }), [settings, updateSettings, t, platformModifier, loading]);
+  }), [settings, updateSettings, platformModifier, loading]);
 
   if (loading) {
     return <div className="loading">Loading settings...</div>;

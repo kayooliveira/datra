@@ -1,8 +1,8 @@
 import { DatabaseIcon, PlusIcon } from "lucide-react";
-import { useSettings } from "../contexts/SettingsContext";
+import { useTranslation } from "react-i18next";
 
 function EmptyState({ onCreateConnection }) {
-  const { t } = useSettings();
+  const { t } = useTranslation();
 
   return (
     <div className="empty-state">
