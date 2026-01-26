@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Datra Connections Contract (Conceptual)
+  version: 0.1.0
+  description: |
+    Contract for connection management used by the Datra desktop app.
+
+    Note: Datra uses Wails bindings (RPC-style) rather than HTTP. This OpenAPI document is a
+    technology-agnostic contract describing the data shapes and behaviors.
+
+servers:
+  - url: http://localhost
+    description: Conceptual only (not a running HTTP server)
+
+paths:
+  /connections:
+    get:
+      operationId: listConnections
+      summary: List saved connections
+      responses:
+        '200':
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connection'
+
+    post:
+      operationId: createConnection
+      summary: Create a new connection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConnectionRequest'
+      responses:
+        '201':
+          description: Created connection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connection'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Connection:
+      type: object
+      required: [id, name, dbType, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          description: Stable identifier
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dbType:
+          type: string
+          description: Database type identifier
+          enum: [postgres, mysql, sqlite, mssql]
+        host:
+          type: string
+          nullable: true
+        port:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 65535
+        database:
+          type: string
+          nullable: true
+        username:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateConnectionRequest:
+      type: object
+      required: [name, dbType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        dbType:
+          type: string
+          enum: [postgres, mysql, sqlite, mssql]
+        host:
+          type: string
+          nullable: true
+        port:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 65535
+        database:
+          type: string
+          nullable: true
+        username:
+          type: string
+          nullable: true
+
+    Error:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+          nullable: true
