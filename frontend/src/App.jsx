@@ -1,28 +1,30 @@
-import {useState} from 'react';
-import logo from './assets/images/logo-universal.png';
-import './App.css';
-import {Greet} from "../wailsjs/go/main/App";
+import { CommandIcon, DatabaseIcon, PlusIcon } from "lucide-react";
 
 function App() {
-    const [resultText, setResultText] = useState("Please enter your name below 👇");
-    const [name, setName] = useState('');
-    const updateName = (e) => setName(e.target.value);
-    const updateResultText = (result) => setResultText(result);
-
-    function greet() {
-        Greet(name).then(updateResultText);
-    }
-
-    return (
-        <div id="App">
-            <img src={logo} id="logo" alt="logo"/>
-            <div id="result" className="result">{resultText}</div>
-            <div id="input" className="input-box">
-                <input id="name" className="input" onChange={updateName} autoComplete="off" name="input" type="text"/>
-                <button className="btn" onClick={greet}>Greet</button>
-            </div>
-        </div>
-    )
+  return (
+    <div>
+      <header></header>
+      <main>
+        <h1>No Database Connections</h1>
+        <p>
+          Create a connection to start exploring and querying your databases.
+          Datra supports PostgreSQL, MySQL, SQLite, and more.
+        </p>
+        <DatabaseIcon size={120} strokeWidth={1} />
+        <button>
+          Create New Connection <PlusIcon size={16} />
+        </button>
+      </main>
+      <footer>
+        <span>
+          <CommandIcon size={16} /> + N New Connection
+        </span>
+        <span>
+          <CommandIcon size={16} /> + O Open File (.datra)
+        </span>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
