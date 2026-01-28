@@ -1,0 +1,35 @@
+{
+  "empty_state": {
+    "title": "Sem Conexões de Banco de Dados",
+    "description": "Conecte-se ao seu primeiro banco de dados para começar. O Datra suporta PostgreSQL, MySQL, SQLite e muito mais.",
+    "button": "Criar Nova Conexão"
+  },
+  "app": {
+    "loading": "Carregando...",
+    "connections": "Conexões",
+    "footer": {
+      "refresh": "Atualizar",
+      "new_connection": "Nova Conexão",
+      "open_file": "Abrir Arquivo (.datra)",
+      "quit": "Sair"
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themes": {
+      "light": "Claro",
+      "dark": "Escuro"
+    },
+    "languages": {
+      "en": "Inglês",
+      "pt": "Português"
+    }
+  },
+  "menu": {
+    "file": "Arquivo",
+    "settings": "Configurações",
+    "quit": "Sair"
+  }
+}

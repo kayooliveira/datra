@@ -4,6 +4,16 @@ import {main} from '../models';
 
 export function GetConnections():Promise<Array<main.ConnectionProfile>>;
 
+export function GetPlatform():Promise<string>;
+
+export function GetSettings():Promise<main.UserPreferences>;
+
+export function GetSettingsPath():Promise<string>;
+
 export function GetStoragePath():Promise<string>;
 
 export function Greet(arg1:string):Promise<string>;
+
+export function SaveSettings(arg1:main.UserPreferences):Promise<void>;
+
+export function UpdateMenu(arg1:string):Promise<void>;

@@ -1,15 +1,33 @@
-html {
-    background-color: rgba(27, 38, 54, 1);
-    text-align: center;
-    color: white;
+:root {
+    --bg-color: #1b2636;
+    --text-color: #ffffff;
+    --primary-color: #3b82f6;
+    --primary-hover: #2563eb;
+    --secondary-bg: rgba(0, 0, 0, 0.2);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --input-bg: rgba(255, 255, 255, 0.05);
 }
 
-body {
+[data-theme='light'] {
+    --bg-color: #f3f4f6;
+    --text-color: #1f2937;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-bg: rgba(0, 0, 0, 0.05);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --input-bg: #ffffff;
+}
+
+html, body {
     margin: 0;
-    color: white;
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
+    transition: background-color 0.2s, color 0.2s;
 }
 
 @font-face {
@@ -45,6 +63,7 @@ main {
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    text-align: center;
 }
 
 .empty-state-content {
@@ -68,7 +87,7 @@ p {
 }
 
 .primary-button {
-    background-color: #3b82f6;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -82,12 +101,12 @@ p {
 }
 
 .primary-button:hover {
-    background-color: #2563eb;
+    background-color: var(--primary-hover);
 }
 
 footer {
-    padding: 1rem;
-    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0.75rem 1rem;
+    background-color: var(--secondary-bg);
     display: flex;
     gap: 2rem;
     justify-content: center;
@@ -106,4 +125,186 @@ footer span {
     align-items: center;
     justify-content: center;
     height: 100vh;
+}
+
+/* Menu Bar Custom */
+.menu-bar {
+    height: 30px;
+    background-color: var(--secondary-bg);
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    font-size: 0.8rem;
+    border-bottom: 1px solid var(--border-color);
+    user-select: none;
+    -webkit-app-region: drag; /* Permite arrastar a janela por aqui se for frameless futuramente */
+}
+
+.menu-item-container {
+    position: relative;
+    -webkit-app-region: no-drag;
+}
+
+.menu-item {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.1s;
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: var(--border-color);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    min-width: 200px;
+    padding: 0.25rem;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 0.85rem;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.dropdown-item-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 0.25rem 0;
+}
+
+.shortcut {
+    font-size: 0.75rem;
+    opacity: 0.5;
+}
+
+.dropdown-item:hover .shortcut {
+    opacity: 0.8;
+}
+
+/* Settings Page */
+.settings-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-color);
+    overflow: hidden;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-header h1 {
+    margin: 0;
+    font-size: 1.125rem;
+}
+
+.settings-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.settings-section {
+    padding: 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.settings-select {
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    min-width: 150px;
+}
+
+.theme-toggle {
+    display: flex;
+    background-color: var(--secondary-bg);
+    padding: 0.25rem;
+    border-radius: 6px;
+}
+
+.toggle-option {
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.toggle-option.active {
+    background-color: var(--bg-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.icon-button {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+    background-color: var(--secondary-bg);
 }

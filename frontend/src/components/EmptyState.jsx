@@ -1,17 +1,19 @@
 import { DatabaseIcon, PlusIcon } from "lucide-react";
+import { useSettings } from "../contexts/SettingsContext";
 
 function EmptyState({ onCreateConnection }) {
+  const { t } = useSettings();
+
   return (
     <div className="empty-state">
       <div className="empty-state-content">
         <DatabaseIcon size={120} strokeWidth={1} className="empty-state-icon" />
-        <h1>No Database Connections</h1>
+        <h1>{t('empty_state.title')}</h1>
         <p>
-          Connect to your first database to get started.
-          Datra supports PostgreSQL, MySQL, SQLite, and more.
+          {t('empty_state.description')}
         </p>
         <button className="primary-button" onClick={onCreateConnection}>
-          Create New Connection <PlusIcon size={16} />
+          {t('empty_state.button')} <PlusIcon size={16} />
         </button>
       </div>
     </div>
