@@ -3,7 +3,11 @@ import { useSettings } from '../contexts/SettingsContext';
 import { XIcon, MoonIcon, SunIcon, GlobeIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-function SettingsPage({ onClose }) {
+interface SettingsPageProps {
+  onClose: () => void;
+}
+
+function SettingsPage({ onClose }: SettingsPageProps) {
   const { settings, updateSettings } = useSettings();
   const { t } = useTranslation();
 

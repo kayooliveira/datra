@@ -1,7 +1,11 @@
 import { DatabaseIcon, PlusIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-function EmptyState({ onCreateConnection }) {
+interface EmptyStateProps {
+  onCreateConnection: () => void;
+}
+
+function EmptyState({ onCreateConnection }: EmptyStateProps) {
   const { t } = useTranslation();
 
   return (

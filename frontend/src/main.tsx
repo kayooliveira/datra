@@ -5,7 +5,7 @@ import './i18n'
 import App from './App'
 import { SettingsProvider } from './contexts/SettingsContext'
 
-const container = document.getElementById('root')
+const container = document.getElementById('root')!
 
 const root = createRoot(container)
 
