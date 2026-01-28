@@ -13,9 +13,9 @@ description: "Task list for Empty State Guide implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create feature documentation structure in specs/001-empty-state-guide/
-- [ ] T002 Verify Wails project dependencies in go.mod and frontend/package.json
-- [ ] T003 [P] Configure basic linting rules if not already present
+- [x] T001 Create feature documentation structure in specs/001-empty-state-guide/
+- [x] T002 Verify Wails project dependencies in go.mod and frontend/package.json
+- [x] T003 [P] Configure basic linting rules if not already present
 
 ---
 
@@ -23,11 +23,11 @@ description: "Task list for Empty State Guide implementation"
 
 **Purpose**: Core infrastructure for data and backend logic
 
-- [ ] T004 Define ConnectionProfile struct in app.go
-- [ ] T005 Implement storage path logic (GetStoragePath) in app.go
-- [ ] T006 Implement YAML reading logic (GetConnections) in app.go
-- [ ] T007 Expose GetConnections method to Wails runtime in app.go
-- [ ] T008 [P] Install yaml package in go.mod
+- [x] T004 Define ConnectionProfile struct in app.go
+- [x] T005 Implement storage path logic (GetStoragePath) in app.go
+- [x] T006 Implement YAML reading logic (GetConnections) in app.go
+- [x] T007 Expose GetConnections method to Wails runtime in app.go
+- [x] T008 [P] Install yaml package in go.mod
 
 **Checkpoint**: Backend is ready to serve connection data.
 
@@ -41,11 +41,11 @@ description: "Task list for Empty State Guide implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Create EmptyState component in frontend/src/components/EmptyState.jsx
-- [ ] T010 [P] [US1] Add "New Connection" button and welcome text to EmptyState.jsx
-- [ ] T011 [US1] Update App.jsx to fetch connections via Wails GetConnections on mount
-- [ ] T012 [US1] Implement conditional rendering in App.jsx (EmptyState vs Placeholder) based on count
-- [ ] T013 [US1] Add basic CSS for centering and layout in frontend/src/style.css (or component specific)
+- [x] T009 [P] [US1] Create EmptyState component in frontend/src/components/EmptyState.jsx
+- [x] T010 [P] [US1] Add "New Connection" button and welcome text to EmptyState.jsx
+- [x] T011 [US1] Update App.jsx to fetch connections via Wails GetConnections on mount
+- [x] T012 [US1] Implement conditional rendering in App.jsx (EmptyState vs Placeholder) based on count
+- [x] T013 [US1] Add basic CSS for centering and layout in frontend/src/style.css (or component specific)
 
 **Checkpoint**: App shows empty state correctly on launch.
 
@@ -59,9 +59,9 @@ description: "Task list for Empty State Guide implementation"
 
 ### Implementation for User Story 3
 
-- [ ] T014 [US3] Add onClick handler to button in frontend/src/components/EmptyState.jsx
-- [ ] T015 [US3] Implement CreateConnection placeholder method in App.jsx or Wails (as needed by future specs)
-- [ ] T016 [US3] Log "Create Connection Clicked" to console in handler (temporary verification)
+- [x] T014 [US3] Add onClick handler to button in frontend/src/components/EmptyState.jsx
+- [x] T015 [US3] Implement CreateConnection placeholder method in App.jsx or Wails (as needed by future specs)
+- [x] T016 [US3] Log "Create Connection Clicked" to console in handler (temporary verification)
 
 **Checkpoint**: Button is interactive.
 
@@ -75,8 +75,8 @@ description: "Task list for Empty State Guide implementation"
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] Add manual "Refresh" button or poll mechanism in App.jsx (for testing state transition without full delete feature)
-- [ ] T018 [US2] Verify state transition from "List" to "Empty" by mocking `setConnections([])` in React DevTools
+- [x] T017 [US2] Add manual "Refresh" button or poll mechanism in App.jsx (for testing state transition without full delete feature)
+- [x] T018 [US2] Verify state transition from "List" to "Empty" by mocking `setConnections([])` in React DevTools
 
 **Checkpoint**: State transitions work dynamically.
 
@@ -86,9 +86,9 @@ description: "Task list for Empty State Guide implementation"
 
 **Purpose**: UI Refinements and cleanup.
 
-- [ ] T019 [P] Polish CSS for EmptyState to match "IDE-style" (dense, functional)
-- [ ] T020 [P] Ensure Light/Dark mode compatibility for EmptyState icons/text
-- [ ] T021 Run verification steps from specs/001-empty-state-guide/quickstart.md
+- [x] T019 [P] Polish CSS for EmptyState to match "IDE-style" (dense, functional)
+- [x] T020 [P] Ensure Light/Dark mode compatibility for EmptyState icons/text
+- [x] T021 Run verification steps from specs/001-empty-state-guide/quickstart.md
 
 ---
 

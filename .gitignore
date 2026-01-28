@@ -1,3 +1,29 @@
+# Binaries
 build/bin
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Node.js
 node_modules
+frontend/node_modules
 frontend/dist
+
+# Go
+*.test
+*.out
+vendor/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Wails
+wails.json.user

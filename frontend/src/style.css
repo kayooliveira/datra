@@ -22,5 +22,88 @@ body {
 
 #app {
     height: 100vh;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.empty-state-content {
+    max-width: 400px;
+}
+
+.empty-state-icon {
+    margin-bottom: 2rem;
+    opacity: 0.5;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    line-height: 1.5;
+}
+
+.primary-button {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+    background-color: #2563eb;
+}
+
+footer {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    font-size: 0.875rem;
+    opacity: 0.6;
+}
+
+footer span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
