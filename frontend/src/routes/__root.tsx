@@ -36,7 +36,7 @@ function RootLayout() {
 
   const defaultLayout = localStorage.getItem("sidebar-layout-v5")
     ? JSON.parse(localStorage.getItem("sidebar-layout-v5")!)
-    : { "sidebar": 25, "main-content": 75 };
+    : { sidebar: 25, "main-content": 75 };
 
   return (
     <div
@@ -44,23 +44,24 @@ function RootLayout() {
       style={{ height: "100vh", display: "flex", flexDirection: "column" }}
     >
       <PanelGroup
-        direction="horizontal"
+        dir="horizontal"
         onLayoutChanged={handleLayoutChange}
         style={{ flex: 1 }}
       >
-        <Panel 
+        <Panel
           id="sidebar"
-          defaultSize={defaultLayout["sidebar"]} 
-          minSize={20} 
-          maxSize={50}
+          defaultSize={defaultLayout["sidebar"]}
+          minSize="20%"
+          maxSize={"50%"}
         >
           <Sidebar />
         </Panel>
         <ResizableHandle />
-        <Panel 
+        <Panel
           id="main-content"
-          defaultSize={defaultLayout["main-content"]} 
-          minSize={30}
+          defaultSize={defaultLayout["main-content"]}
+          minSize="50%"
+          maxSize="80%"
         >
           <div
             style={{ height: "100%", display: "flex", flexDirection: "column" }}
