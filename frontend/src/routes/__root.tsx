@@ -31,21 +31,21 @@ function RootLayout() {
   };
 
   const onLayout = (sizes: number[]) => {
-    localStorage.setItem("sidebar-layout-v3", JSON.stringify(sizes));
+    localStorage.setItem("sidebar-layout-v4", JSON.stringify(sizes));
   };
 
-  const defaultLayout = localStorage.getItem("sidebar-layout-v3")
-    ? JSON.parse(localStorage.getItem("sidebar-layout-v3")!)
-    : [20, 80];
+  const defaultLayout = localStorage.getItem("sidebar-layout-v4")
+    ? JSON.parse(localStorage.getItem("sidebar-layout-v4")!)
+    : [25, 75];
 
   return (
     <div className="app-container" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <PanelGroup direction="horizontal" onLayout={onLayout} style={{ flex: 1 }}>
-        <Panel defaultSize={defaultLayout[0]} minSize={15} maxSize={50}>
+        <Panel defaultSize={defaultLayout[0]} minSize={20} maxSize={50}>
           <Sidebar />
         </Panel>
         <ResizableHandle />
-        <Panel defaultSize={defaultLayout[1]}>
+        <Panel defaultSize={defaultLayout[1]} minSize={30}>
           <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <main style={{ flex: 1, overflow: 'auto' }}>
               <Outlet />
