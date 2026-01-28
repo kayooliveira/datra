@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Panel, Group as PanelGroup } from "react-resizable-panels";
+import { Layout, Panel, Group as PanelGroup } from "react-resizable-panels";
 import { Sidebar } from "../components/sidebar/sidebar";
 import { ResizableHandle } from "../components/sidebar/resizable-handle";
 
@@ -30,24 +30,42 @@ function RootLayout() {
     window.location.reload();
   };
 
-  const onLayout = (sizes: number[]) => {
-    localStorage.setItem("sidebar-layout-v4", JSON.stringify(sizes));
+  const handleLayoutChange = (layout: Layout) => {
+    localStorage.setItem("sidebar-layout-v5", JSON.stringify(layout));
   };
 
-  const defaultLayout = localStorage.getItem("sidebar-layout-v4")
-    ? JSON.parse(localStorage.getItem("sidebar-layout-v4")!)
-    : [25, 75];
+  const defaultLayout = localStorage.getItem("sidebar-layout-v5")
+    ? JSON.parse(localStorage.getItem("sidebar-layout-v5")!)
+    : { "sidebar": 25, "main-content": 75 };
 
   return (
-    <div className="app-container" style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <PanelGroup direction="horizontal" onLayout={onLayout} style={{ flex: 1 }}>
-        <Panel defaultSize={defaultLayout[0]} minSize={20} maxSize={50}>
+    <div
+      className="app-container"
+      style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+    >
+      <PanelGroup
+        direction="horizontal"
+        onLayoutChanged={handleLayoutChange}
+        style={{ flex: 1 }}
+      >
+        <Panel 
+          id="sidebar"
+          defaultSize={defaultLayout["sidebar"]} 
+          minSize={20} 
+          maxSize={50}
+        >
           <Sidebar />
         </Panel>
         <ResizableHandle />
-        <Panel defaultSize={defaultLayout[1]} minSize={30}>
-          <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <main style={{ flex: 1, overflow: 'auto' }}>
+        <Panel 
+          id="main-content"
+          defaultSize={defaultLayout["main-content"]} 
+          minSize={30}
+        >
+          <div
+            style={{ height: "100%", display: "flex", flexDirection: "column" }}
+          >
+            <main style={{ flex: 1, overflow: "auto" }}>
               <Outlet />
             </main>
             <footer>
