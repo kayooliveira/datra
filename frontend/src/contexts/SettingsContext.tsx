@@ -2,10 +2,26 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { GetSettings, SaveSettings, UpdateMenu, GetPlatform } from '../../wailsjs/go/main/App';
 import { useTranslation } from 'react-i18next';
 
-const SettingsContext = createContext();
+interface Settings {
+  language: string;
+  theme: string;
+}
 
-export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState({ language: 'en', theme: 'light' });
+interface SettingsContextType {
+  settings: Settings;
+  updateSettings: (newSettings: Partial<Settings>) => Promise<void>;
+  platformModifier: string;
+  loading: boolean;
+}
+
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+
+interface SettingsProviderProps {
+  children: React.ReactNode;
+}
+
+export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
+  const [settings, setSettings] = useState<Settings>({ language: 'en', theme: 'light' });
   const [loading, setLoading] = useState(true);
   const [platform, setPlatform] = useState('windows');
   const { i18n } = useTranslation();
@@ -33,7 +49,7 @@ export const SettingsProvider = ({ children }) => {
     document.body.setAttribute('data-theme', settings.theme);
   }, [settings.theme]);
 
-  const updateSettings = useCallback(async (newSettings) => {
+  const updateSettings = useCallback(async (newSettings: Partial<Settings>) => {
     const updated = { ...settings, ...newSettings };
     setSettings(updated);
     await SaveSettings(updated);
@@ -67,7 +83,7 @@ export const SettingsProvider = ({ children }) => {
   );
 };
 
-export const useSettings = () => {
+export const useSettings = (): SettingsContextType => {
   const context = useContext(SettingsContext);
   if (!context) {
     throw new Error('useSettings must be used within a SettingsProvider');

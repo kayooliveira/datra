@@ -6,8 +6,14 @@ import SettingsPage from "./components/SettingsPage";
 import { useSettings } from "./contexts/SettingsContext";
 import { useTranslation } from "react-i18next";
 
+interface Connection {
+  id: string;
+  name: string;
+  [key: string]: any;
+}
+
 function App() {
-  const [connections, setConnections] = useState([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
   const [loadingConnections, setLoadingConnections] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const { platformModifier } = useSettings();
