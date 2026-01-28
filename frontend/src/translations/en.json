@@ -7,6 +7,11 @@
   "app": {
     "loading": "Loading...",
     "connections": "Connections",
+    "sidebar": {
+      "no_connections": "No connections yet",
+      "create_connection": "Create",
+      "new_connection_tooltip": "New Connection"
+    },
     "footer": {
       "refresh": "Refresh",
       "new_connection": "New Connection",

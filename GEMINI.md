@@ -8,6 +8,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-27
 - React 18.2.0 (Frontend), Go 1.23 (Backend) + `react-router-dom`, `lucide-react` (004-frontend-routing)
 - N/A (Frontend state only) (004-frontend-routing)
 - React 18.2.0 (Frontend), Go 1.23 (Backend), TypeScrip + `@tanstack/react-router`, `lucide-react` (004-frontend-routing)
+- React 18.2.0 (Frontend), TypeScript (Frontend) + `lucide-react` (Icons), `@tanstack/react-router` (Routing), `react-resizable-panels` (005-global-sidebar)
+- N/A (Consumes existing `GetConnections` API) (005-global-sidebar)
 
 - Go 1.23 (Backend), React 18.2.0 (Frontend) + Wails v2.11.0, Lucide React (Icons) (001-empty-state-guide)
 
@@ -27,9 +29,9 @@ tests/
 Go 1.23 (Backend), React 18.2.0 (Frontend): Follow standard conventions
 
 ## Recent Changes
+- 005-global-sidebar: Added React 18.2.0 (Frontend), TypeScript (Frontend) + `lucide-react` (Icons), `@tanstack/react-router` (Routing), `react-resizable-panels`
 - 004-frontend-routing: Added React 18.2.0 (Frontend), Go 1.23 (Backend), TypeScrip + `@tanstack/react-router`, `lucide-react`
 - 004-frontend-routing: Added React 18.2.0 (Frontend), Go 1.23 (Backend) + `react-router-dom`, `lucide-react`
-- 002-i18n-settings-page: Added Go 1.23, React 18.2.0 + Wails v2.11.0, `gopkg.in/yaml.v3`, Lucide React
 
 
 <!-- MANUAL ADDITIONS START -->
