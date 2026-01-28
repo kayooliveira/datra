@@ -1,18 +1,28 @@
-import React from 'react'
-import {createRoot} from 'react-dom/client'
-import './style.css'
-import './i18n'
-import App from './App'
-import { SettingsProvider } from './contexts/SettingsContext'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { SettingsProvider } from "./contexts/settings-context";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen";
 
-const container = document.getElementById('root')!
+import "./style.css";
+import "./i18n";
 
-const root = createRoot(container)
+const container = document.getElementById("root")!;
+
+const root = createRoot(container);
+
+const router = createRouter({ routeTree });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 root.render(
-    <React.StrictMode>
-        <SettingsProvider>
-            <App/>
-        </SettingsProvider>
-    </React.StrictMode>
-)
+  <React.StrictMode>
+    <SettingsProvider>
+      <RouterProvider router={router} />
+    </SettingsProvider>
+  </React.StrictMode>,
+);
