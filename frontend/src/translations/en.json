@@ -1,0 +1,35 @@
+{
+  "empty_state": {
+    "title": "No Database Connections",
+    "description": "Connect to your first database to get started. Datra supports PostgreSQL, MySQL, SQLite, and more.",
+    "button": "Create New Connection"
+  },
+  "app": {
+    "loading": "Loading...",
+    "connections": "Connections",
+    "footer": {
+      "refresh": "Refresh",
+      "new_connection": "New Connection",
+      "open_file": "Open File (.datra)",
+      "quit": "Quit"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "languages": {
+      "en": "English",
+      "pt": "Português"
+    }
+  },
+  "menu": {
+    "file": "File",
+    "settings": "Settings",
+    "quit": "Quit"
+  }
+}

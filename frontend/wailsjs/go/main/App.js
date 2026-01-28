@@ -6,10 +6,30 @@ export function GetConnections() {
   return window['go']['main']['App']['GetConnections']();
 }
 
+export function GetPlatform() {
+  return window['go']['main']['App']['GetPlatform']();
+}
+
+export function GetSettings() {
+  return window['go']['main']['App']['GetSettings']();
+}
+
+export function GetSettingsPath() {
+  return window['go']['main']['App']['GetSettingsPath']();
+}
+
 export function GetStoragePath() {
   return window['go']['main']['App']['GetStoragePath']();
 }
 
 export function Greet(arg1) {
   return window['go']['main']['App']['Greet'](arg1);
+}
+
+export function SaveSettings(arg1) {
+  return window['go']['main']['App']['SaveSettings'](arg1);
+}
+
+export function UpdateMenu(arg1) {
+  return window['go']['main']['App']['UpdateMenu'](arg1);
 }
