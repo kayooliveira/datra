@@ -1,50 +1,56 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: [New] -> 1.0.0
+- List of modified principles:
+  - Security First (New)
+  - High Performance (New)
+  - Developer Productivity (New)
+  - IDE-Style UX (New)
+- Added sections: Technology Standards, Development Workflow
+- Removed sections: None
+- Templates requiring updates: 
+  - .specify/templates/plan-template.md (✅ Checked - Generic)
+  - .specify/templates/spec-template.md (✅ Checked - Generic)
+  - .specify/templates/tasks-template.md (✅ Checked - Generic)
+- Follow-up TODOs: None
+-->
+# Datra Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Security First
+Security is paramount. Database credentials, connection strings, and sensitive user data MUST be handled with strict security measures. No plain-text storage of secrets is permitted. Secure communication channels (SSH, SSL/TLS) are MANDATORY for all remote connections to ensure data integrity and confidentiality.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. High Performance
+The application MUST remain responsive under load. Large datasets (millions of rows) MUST NOT freeze the UI. Memory management in both Wails (Go) and React (JS) MUST be optimized to prevent leaks and excessive consumption. Operations exceeding 100ms SHOULD provide visual feedback; blocking operations MUST run asynchronously to maintain a fluid user experience.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Developer Productivity
+The tool is built for developers; therefore, it MUST enhance developer workflows. Features like SQL auto-complete, quick navigation, and snippet management are priorities. The internal codebase MUST also prioritize maintainability and developer experience (DX) through clear documentation, consistent coding standards, and automated testing.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. IDE-Style UX
+The user interface MUST follow an IDE-style layout inspired by DBeaver and HeidiSQL. This includes a dense information density, multi-tab support, and pane-based navigation. Whitespace SHOULD be minimized in favor of functional data display to maximize the utility of the screen real estate for database tasks.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+## Technology Standards
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+The project relies on a specific stack to ensure cross-platform compatibility and performance:
+- **Backend**: Go (using the Wails framework) for robust system interactions and performance-critical logic.
+- **Frontend**: React for a dynamic and responsive user interface.
+- **Styling**: Consistent with IDE aesthetics (dense, functional, dark/light mode support).
+- **Packaging**: Native binaries for Windows, macOS, and Linux are the required output formats.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Development Workflow
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+To ensure quality and stability:
+- **Code Review**: All changes MUST pass peer review before merging.
+- **Testing**: Unit tests for the Go backend are MANDATORY. Component tests for the React frontend are HIGHLY RECOMMENDED.
+- **CI/CD**: Automated builds and tests MUST pass before any merge to the main branch.
+- **Branching**: Follow standard Git feature branching workflows.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution supersedes all other project documentation in case of conflict.
+- **Amendments**: Changes to this document require a Pull Request with an explicit "Constitution Update" label and team consensus.
+- **Compliance**: All new features MUST be checked against these principles during the Planning phase.
+- **Versioning**: The Constitution follows Semantic Versioning (Major.Minor.Patch).
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-01-27 | **Last Amended**: 2026-01-27
