@@ -6,21 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"datra/internal/connection"
+
 	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"gopkg.in/yaml.v3"
 )
-
-type ConnectionProfile struct {
-	ID           string `json:"id"`
-	Name         string `json:"name"`
-	DatabaseType string `json:"database_type"`
-	Host         string `json:"host"`
-	Port         int    `json:"port"`
-	Username     string `json:"username"`
-	DatabaseName string `json:"database_name"`
-}
 
 type UserPreferences struct {
 	Language string `yaml:"language" json:"language"`
@@ -28,11 +20,17 @@ type UserPreferences struct {
 }
 
 type App struct {
-	ctx context.Context
+	ctx               context.Context
+	connectionService *connection.Service
 }
 
 func NewApp() *App {
-	return &App{}
+	home, _ := os.UserHomeDir()
+	configDir := filepath.Join(home, ".datra")
+	storage := connection.NewStorage(configDir)
+	return &App{
+		connectionService: connection.NewService(storage),
+	}
 }
 
 func (a *App) startup(ctx context.Context) {
@@ -120,48 +118,29 @@ func (a *App) SaveSettings(settings UserPreferences) error {
 	return os.WriteFile(path, data, 0644)
 }
 
-func (a *App) GetStoragePath() (string, error) {
-	home, err := os.UserHomeDir()
+func (a *App) GetConnections() []connection.Connection {
+	connections, err := a.connectionService.GetConnections()
 	if err != nil {
-		return "", err
+		fmt.Printf("Error getting connections: %v\n", err)
+		return []connection.Connection{}
 	}
-
-	configDir := filepath.Join(home, ".datra")
-	if _, err := os.Stat(configDir); os.IsNotExist(err) {
-		err := os.MkdirAll(configDir, 0755)
-		if err != nil {
-			return "", err
-		}
-	}
-
-	return filepath.Join(configDir, "connections.yaml"), nil
+	return connections
 }
 
-func (a *App) GetConnections() []ConnectionProfile {
-	path, err := a.GetStoragePath()
-	if err != nil {
-		fmt.Printf("Error getting storage path: %v\n", err)
-		return []ConnectionProfile{}
-	}
+func (a *App) CreateConnection(conn connection.Connection, password string, tunnelPassword string) (string, error) {
+	return a.connectionService.CreateConnection(conn, password, tunnelPassword)
+}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return []ConnectionProfile{}
-	}
+func (a *App) UpdateConnection(conn connection.Connection, password string, tunnelPassword string) error {
+	return a.connectionService.UpdateConnection(conn, password, tunnelPassword)
+}
 
-	data, err := os.ReadFile(path)
-	if err != nil {
-		fmt.Printf("Error reading connections file: %v\n", err)
-		return []ConnectionProfile{}
-	}
+func (a *App) DeleteConnection(id string) error {
+	return a.connectionService.DeleteConnection(id)
+}
 
-	var connections []ConnectionProfile
-	err = yaml.Unmarshal(data, &connections)
-	if err != nil {
-		fmt.Printf("Error unmarshaling connections: %v\n", err)
-		return []ConnectionProfile{}
-	}
-
-	return connections
+func (a *App) TestConnection(conn connection.Connection, password string, tunnelPassword string) error {
+	return a.connectionService.TestConnection(conn, password, tunnelPassword)
 }
 
 func (a *App) Greet(name string) string {

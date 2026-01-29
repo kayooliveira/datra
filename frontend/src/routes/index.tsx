@@ -1,23 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { GetConnections } from "../../wailsjs/go/main/App";
 import EmptyState from "../components/empty-state";
 import { useTranslation } from "react-i18next";
-
-interface Connection {
-  id: string;
-  name: string;
-  [key: string]: any;
-}
+import { connection } from "../../wailsjs/go/models";
+import { ConnectionCard } from "../components/connections/connection-card";
+import styles from "./dashboard.module.css";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
 });
 
 function HomeComponent() {
-  const [connections, setConnections] = useState<Connection[]>([]);
+  const [connections, setConnections] = useState<connection.Connection[]>([]);
   const [loadingConnections, setLoadingConnections] = useState(true);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchConnections();
@@ -35,12 +33,15 @@ function HomeComponent() {
   };
 
   const handleCreateConnection = () => {
-    console.log("Create Connection Clicked");
-    // TODO: Implement connection creation dialog
+    navigate({ to: "/connections/new" });
+  };
+
+  const handleSelectConnection = (id: string) => {
+    console.log("Selected connection:", id);
   };
 
   if (loadingConnections) {
-    return <div className="loading">{t("app.loading")}</div>;
+    return <div className={styles.loading}>{t("app.loading")}</div>;
   }
 
   if (connections.length === 0) {
@@ -48,13 +49,22 @@ function HomeComponent() {
   }
 
   return (
-    <div className="connection-list">
-      <h1>{t("app.connections")}</h1>
-      <ul>
+    <div className={styles.content}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>{t("app.connections.title")}</h1>
+        <button className={styles.primaryBtn} onClick={handleCreateConnection}>
+          {t("app.sidebar.new_connection")}
+        </button>
+      </div>
+      <div className={styles.grid}>
         {connections.map((conn) => (
-          <li key={conn.id}>{conn.name}</li>
+          <ConnectionCard
+            key={conn.id}
+            connection={conn}
+            onSelect={handleSelectConnection}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,40 @@
+.statusBar {
+  height: 22px;
+  background-color: var(--primary); /* Native IDEs often use primary color for status bar (e.g. VS Code blue) */
+  color: var(--primary-fg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 11px;
+  user-select: none;
+  z-index: 1000;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.sectionRight {
+  justify-content: flex-end;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.9;
+  cursor: default;
+  padding: 0 4px;
+  height: 100%;
+}
+
+.item:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}

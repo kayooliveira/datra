@@ -1,511 +1,107 @@
 :root {
-    --bg-color: #1b2636;
-    --text-color: #ffffff;
-    --primary-color: #3b82f6;
-    --primary-hover: #2563eb;
-    --secondary-bg: rgba(0, 0, 0, 0.2);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --input-bg: rgba(255, 255, 255, 0.05);
+  /* Core Colors - Native-like Neutral Palette */
+  --bg-app: #1e1e1e;       /* VS Code-like background */
+  --bg-panel: #252526;     /* Slightly lighter for sidebars */
+  --bg-hover: #2a2d2e;     /* List item hover */
+  --bg-active: #37373d;    /* List item active/selected */
+  --bg-input: #3c3c3c;     /* Input background */
+  
+  --text-main: #cccccc;
+  --text-muted: #858585;
+  --text-bright: #ffffff;
+  
+  --border-subtle: #333333; /* Very subtle dividers */
+  --border-focus: #007fd4;  /* Native blue focus */
+  
+  --primary: #007fd4;       /* Standard blue action color */
+  --primary-hover: #026ec1;
+  --primary-fg: #ffffff;
+
+  --danger: #f85149;
+  
+  /* Layout */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  
+  --font-xs: 11px;
+  --font-sm: 12px;
+  --font-base: 13px;
+  --font-lg: 16px;
 }
 
 [data-theme='light'] {
-    --bg-color: #f3f4f6;
-    --text-color: #1f2937;
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-bg: rgba(0, 0, 0, 0.05);
-    --border-color: rgba(0, 0, 0, 0.1);
-    --input-bg: #ffffff;
+  --bg-app: #ffffff;
+  --bg-panel: #f3f3f3;
+  --bg-hover: #e4e6f1;
+  --bg-active: #d6ebff; /* Native mac selection style often blue-ish */
+  --bg-input: #ffffff;
+
+  --text-main: #333333;
+  --text-muted: #666666;
+  --text-bright: #000000;
+
+  --border-subtle: #e5e5e5;
+  --border-focus: #0066b8;
+
+  --primary: #0066b8;
+  --primary-hover: #005a9e;
+  --primary-fg: #ffffff;
+  
+  --danger: #d13438;
 }
 
+/* Reset & Base */
 html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-@font-face {
-    font-family: "Nunito";
-    font-style: normal;
-    font-weight: 400;
-    src: local(""),
-    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--font-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden; /* App-like behavior */
 }
 
 #app {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.empty-state {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-}
-
-.empty-state-content {
-    max-width: 400px;
-}
-
-.empty-state-icon {
-    margin-bottom: 2rem;
-    opacity: 0.5;
-}
-
-h1 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-p {
-    margin-bottom: 2rem;
-    opacity: 0.8;
-    line-height: 1.5;
-}
-
-.primary-button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: background-color 0.2s;
-}
-
-.primary-button:hover {
-    background-color: var(--primary-hover);
-}
-
-footer {
-    padding: 0.75rem 1rem;
-    background-color: var(--secondary-bg);
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    font-size: 0.875rem;
-    opacity: 0.6;
-}
-
-footer span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
-
-/* Menu Bar Custom */
-.menu-bar {
-    height: 30px;
-    background-color: var(--secondary-bg);
-    display: flex;
-    align-items: center;
-    padding: 0 0.5rem;
-    font-size: 0.8rem;
-    border-bottom: 1px solid var(--border-color);
-    user-select: none;
-    -webkit-app-region: drag; /* Permite arrastar a janela por aqui se for frameless futuramente */
-}
-
-.menu-item-container {
-    position: relative;
-    -webkit-app-region: no-drag;
-}
-
-.menu-item {
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    padding: 0.25rem 0.75rem;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.1s;
-}
-
-.menu-item:hover, .menu-item.active {
-    background-color: var(--border-color);
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    min-width: 200px;
-    padding: 0.25rem;
-    z-index: 1000;
-}
-
-.dropdown-item {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.4rem 0.75rem;
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    border-radius: 3px;
-    font-size: 0.85rem;
-}
-
-.dropdown-item:hover {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.dropdown-item-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background-color: var(--border-color);
-    margin: 0.25rem 0;
-}
-
-.shortcut {
-    font-size: 0.75rem;
-    opacity: 0.5;
-}
-
-.dropdown-item:hover .shortcut {
-    opacity: 0.8;
-}
-
-/* Settings Page */
-.settings-page {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--bg-color);
-    overflow: hidden;
-}
-
-.settings-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.settings-header h1 {
-    margin: 0;
-    font-size: 1.125rem;
-}
-
-.settings-content {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.settings-section {
-    padding: 1.5rem;
-    max-width: 600px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.setting-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
-
-.setting-label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 500;
-}
-
-.settings-select {
-    padding: 0.5rem;
-    border-radius: 4px;
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    min-width: 150px;
-}
-
-.theme-toggle {
-    display: flex;
-    background-color: var(--secondary-bg);
-    padding: 0.25rem;
-    border-radius: 6px;
-}
-
-.toggle-option {
-    padding: 0.4rem 1rem;
-    border-radius: 4px;
-    border: none;
-    background: transparent;
-    color: var(--text-color);
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: all 0.2s;
-}
-
-.toggle-option.active {
-    background-color: var(--bg-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.icon-button {
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-
-.icon-button:hover {
-    background-color: var(--secondary-bg);
-}
-
-/* Sidebar Styles */
-.sidebar {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--secondary-bg);
-    border-right: 1px solid var(--border-color);
-}
-
-.sidebar-header {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.sidebar-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0;
-    opacity: 0.8;
-}
-
-.sidebar-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0.5rem;
-}
-
-.sidebar-footer {
-    padding: 0.5rem;
-    border-top: 1px solid var(--border-color);
-}
-
-/* Connection List */
-.connection-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.connection-item-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 0.1s;
-}
-
-.connection-item-btn:hover {
-    background-color: var(--bg-color);
-}
-
-.connection-name {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Empty State Sidebar */
-.empty-state-sidebar {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    text-align: center;
-    color: var(--text-color);
-    opacity: 0.7;
-}
-
-.empty-state-icon-container {
-    margin-bottom: 0.5rem;
-    padding: 0.75rem;
-    background-color: var(--bg-color);
-    border-radius: 50%;
-}
-
-.create-btn-small {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.create-btn-small:hover {
-    background-color: var(--primary-hover);
-}
-
-.create-icon-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 4px;
-    opacity: 0.7;
-    transition: opacity 0.2s, background-color 0.2s;
-}
-
-.create-icon-btn:hover {
-    opacity: 1;
-    background-color: var(--bg-color);
-}
-
-/* Resize Handle */
-.resize-handle {
-    position: relative;
-    display: flex;
-    width: 10px; /* Wider hit area */
-    margin: 0 -5px; /* Center it */
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    transition: background-color 0.2s;
-    outline: none;
-    cursor: col-resize;
-}
-
-.resize-handle:hover, .resize-handle[data-resize-handle-state="drag"] {
-    background-color: rgba(59, 130, 246, 0.05);
-}
-
-.resize-handle::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background-color: var(--border-color);
-    transform: translateX(-50%);
-    transition: all 0.2s;
-}
-
-.resize-handle:hover::before, .resize-handle[data-resize-handle-state="drag"]::before {
-    background-color: var(--primary-color);
-    width: 2px;
-}
-
-.resize-grip {
-    z-index: 20;
-    display: flex;
-    height: 16px;
-    width: 12px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-color);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.2s;
-}
-
-.resize-handle:hover .resize-grip, .resize-handle[data-resize-handle-state="drag"] .resize-grip {
-    opacity: 1;
-}
-
-/* Scrollbar Styles */
+/* Scrollbars */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
+  background: rgba(128, 128, 128, 0.4);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-color);
-    opacity: 0.5;
+  background-color: rgba(128, 128, 128, 0.6);
+}
+
+/* Generic Utility Classes (Use sparingly, prefer modules) */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

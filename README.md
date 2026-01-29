@@ -11,6 +11,14 @@
 - **I18n Support**: Multi-language support (currently English and Portuguese).
 - **Security First**: Designed with safe credential handling and secure database connections.
 
+## ⌨️ Keyboard Shortcuts
+
+| Action | macOS | Windows/Linux |
+|--------|-------|---------------|
+| New Connection | `Cmd + N` | `Ctrl + N` |
+| Go Home | `Cmd + H` | `Ctrl + H` |
+| Open Settings | `Cmd + ,` | `Ctrl + ,` |
+
 ## 🛠️ Technology Stack
 
 - **Backend**: [Go 1.23](https://golang.org/) + [Wails v2](https://wails.io/)

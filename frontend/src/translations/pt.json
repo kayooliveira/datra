@@ -6,11 +6,56 @@
   },
   "app": {
     "loading": "Carregando...",
-    "connections": "Conexões",
     "sidebar": {
       "no_connections": "Nenhuma conexão ainda",
       "create_connection": "Criar",
-      "new_connection_tooltip": "Nova Conexão"
+      "new_connection_tooltip": "Nova Conexão",
+      "new_connection": "Nova Conexão"
+    },
+    "connections": {
+      "title": "Conexões",
+      "new": {
+        "title": "Nova Conexão"
+      },
+      "edit": {
+        "title": "Editar Conexão"
+      },
+      "delete": {
+        "title": "Excluir Conexão",
+        "confirm": "Tem certeza que deseja excluir esta conexão? Esta ação não pode ser desfeita."
+      },
+      "test": {
+        "success": "Conexão bem-sucedida!",
+        "error": "Falha na conexão: "
+      },
+      "tabs": {
+        "general": "Geral",
+        "ssh": "Túnel SSH",
+        "ssl": "SSL/TLS"
+      },
+      "form": {
+        "name": "Nome da Conexão",
+        "host": "Host",
+        "port": "Porta",
+        "username": "Usuário",
+        "password": "Senha",
+        "database": "Banco de Dados (Opcional)",
+        "driver": "Driver",
+        "ssh_enabled": "Habilitar Túnel SSH",
+        "ssh_host": "SSH Host",
+        "ssh_port": "SSH Porta",
+        "ssh_user": "SSH Usuário",
+        "ssh_auth": "Método de Autenticação",
+        "ssh_password": "SSH Senha / Passphrase",
+        "ssl_mode": "Modo SSL",
+        "test": "Testar Conexão",
+        "save": "Salvar Conexão"
+      }
+    },
+    "common": {
+      "cancel": "Cancelar",
+      "delete": "Excluir",
+      "save": "Salvar"
     },
     "footer": {
       "refresh": "Atualizar",
