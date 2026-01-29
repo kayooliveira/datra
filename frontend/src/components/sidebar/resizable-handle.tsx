@@ -1,5 +1,6 @@
 import { Separator as ResizeHandle } from "react-resizable-panels";
 import { GripVertical } from "lucide-react";
+import styles from "./resizable-handle.module.css";
 
 export function ResizableHandle({
   className = "",
@@ -10,10 +11,10 @@ export function ResizableHandle({
 }) {
   return (
     <ResizeHandle
-      className={`resize-handle ${className}`}
+      className={`${styles.handle} ${className}`}
       id={id}
     >
-      <div className="resize-grip">
+      <div className={styles.grip}>
         <GripVertical size={10} />
       </div>
     </ResizeHandle>

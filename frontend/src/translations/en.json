@@ -6,11 +6,56 @@
   },
   "app": {
     "loading": "Loading...",
-    "connections": "Connections",
     "sidebar": {
       "no_connections": "No connections yet",
       "create_connection": "Create",
-      "new_connection_tooltip": "New Connection"
+      "new_connection_tooltip": "New Connection",
+      "new_connection": "New Connection"
+    },
+    "connections": {
+      "title": "Connections",
+      "new": {
+        "title": "New Connection"
+      },
+      "edit": {
+        "title": "Edit Connection"
+      },
+      "delete": {
+        "title": "Delete Connection",
+        "confirm": "Are you sure you want to delete this connection? This action cannot be undone."
+      },
+      "test": {
+        "success": "Connection successful!",
+        "error": "Connection failed: "
+      },
+      "tabs": {
+        "general": "General",
+        "ssh": "SSH Tunnel",
+        "ssl": "SSL/TLS"
+      },
+      "form": {
+        "name": "Connection Name",
+        "host": "Host",
+        "port": "Port",
+        "username": "Username",
+        "password": "Password",
+        "database": "Database (Optional)",
+        "driver": "Driver",
+        "ssh_enabled": "Enable SSH Tunnel",
+        "ssh_host": "SSH Host",
+        "ssh_port": "SSH Port",
+        "ssh_user": "SSH User",
+        "ssh_auth": "Auth Method",
+        "ssh_password": "SSH Password / Passphrase",
+        "ssl_mode": "SSL Mode",
+        "test": "Test Connection",
+        "save": "Save Connection"
+      }
+    },
+    "common": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "save": "Save"
     },
     "footer": {
       "refresh": "Refresh",

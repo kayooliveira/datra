@@ -1,25 +1,21 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { GetConnections } from "../../../wailsjs/go/main/App";
-import { ConnectionList } from "./connection-list";
+import { ConnectionItem } from "./connection-item";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyStateSidebar } from "./empty-state-sidebar";
 import { Plus } from "lucide-react";
 import { useSettings } from "../../contexts/settings-context";
+import { connection } from "../../../wailsjs/go/models";
+import styles from "./sidebar.module.css";
 
 interface SidebarProps {
   className?: string;
 }
 
-interface Connection {
-  id: string;
-  name: string;
-  [key: string]: any;
-}
-
 export function Sidebar({ className = "" }: SidebarProps) {
   const { t } = useTranslation();
-  const [connections, setConnections] = useState<Connection[]>([]);
+  const [connections, setConnections] = useState<connection.Connection[]>([]);
   const navigate = useNavigate();
   const { platformModifier } = useSettings();
 
@@ -37,41 +33,48 @@ export function Sidebar({ className = "" }: SidebarProps) {
   };
 
   const handleSelectConnection = (id: string) => {
-    console.log("Selected connection:", id);
     navigate({ to: "/" });
   };
 
   const handleCreateConnection = () => {
-    console.log("Create new connection triggered");
-    // TODO: Trigger create connection dialog
+    navigate({ to: "/connections/new" });
   };
 
   return (
-    <div className={`sidebar ${className}`}>
-      <div className="sidebar-header">
-        <h2 className="sidebar-title">
-          {t("app.connections", "Connections")}
+    <div className={`${styles.container} ${className}`}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>
+          {t("app.connections.title", "Connections")}
         </h2>
         {connections.length > 0 && (
-          <button
-            onClick={handleCreateConnection}
-            className="create-icon-btn"
-            title={t("app.sidebar.new_connection_tooltip") + ` (${platformModifier} + N)`}
-          >
-            <Plus size={16} />
-          </button>
+          <div className={styles.actions}>
+            <button
+              onClick={handleCreateConnection}
+              className={styles.iconBtn}
+              title={`${t("app.sidebar.new_connection_tooltip")} (${platformModifier} + N)`}
+            >
+              <Plus size={14} />
+            </button>
+          </div>
         )}
       </div>
-      <div className="sidebar-content">
+      <div className={styles.content}>
         {connections.length === 0 ? (
           <EmptyStateSidebar onCreate={handleCreateConnection} />
         ) : (
-          <ConnectionList connections={connections} onSelect={handleSelectConnection} />
+          <ul className={styles.list}>
+            {connections.map((conn) => (
+              <li key={conn.id} className={styles.listItem}>
+                <ConnectionItem
+                  connection={conn}
+                  onSelect={handleSelectConnection}
+                />
+              </li>
+            ))}
+          </ul>
         )}
       </div>
-      <div className="sidebar-footer">
-        {/* Additional actions or info can go here */}
-      </div>
+      <div className={styles.footer}>{/* Footer content if needed */}</div>
     </div>
   );
 }

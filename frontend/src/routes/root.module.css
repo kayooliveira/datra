@@ -1,0 +1,45 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.mainWrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  overflow: hidden; /* Prevent double scrollbars */
+  position: relative;
+}
+
+/* Helper styles for content inside Status Bar */
+.statusBarBtn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  font: inherit;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.statusBarBtn:hover {
+  opacity: 1;
+}
+
+.statusBarText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
