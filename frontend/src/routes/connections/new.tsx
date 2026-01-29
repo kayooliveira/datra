@@ -15,25 +15,31 @@ function NewConnectionComponent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testError, setTestError] = useState<string | null>(null);
+  const [testSuccess, setTestSuccess] = useState(false);
 
   const handleSubmit = async (conn: connection.Connection, password: string, tunnelPassword: string) => {
     setIsSubmitting(true);
+    setTestError(null);
+    setTestSuccess(false);
     try {
       await CreateConnection(conn, password, tunnelPassword);
       navigate({ to: "/" });
-    } catch (error) {
-      console.error("Failed to create connection:", error);
+    } catch (error: any) {
+      setTestError(error.message || String(error));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleTest = async (conn: connection.Connection, password: string, tunnelPassword: string) => {
+    setTestError(null);
+    setTestSuccess(false);
     try {
       await TestConnection(conn, password, tunnelPassword);
-      alert(t("app.connections.test.success", "Connection successful!"));
+      setTestSuccess(true);
     } catch (error: any) {
-      alert(t("app.connections.test.error", "Connection failed: ") + error);
+      setTestError(error.message || String(error));
     }
   };
 
@@ -50,6 +56,8 @@ function NewConnectionComponent() {
           onSubmit={handleSubmit}
           onTest={handleTest}
           isSubmitting={isSubmitting}
+          testError={testError}
+          testSuccess={testSuccess}
         />
       </div>
     </div>

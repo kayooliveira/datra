@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { connection } from "../../../wailsjs/go/models";
 import { useTranslation } from "react-i18next";
-import { Shield, Globe, Database, Loader2, Key, User, Server } from "lucide-react";
+import { Shield, Database, Loader2, CheckCircle, XCircle } from "lucide-react";
 import styles from "./connection-form.module.css";
 
 interface ConnectionFormProps {
@@ -9,11 +9,13 @@ interface ConnectionFormProps {
   onSubmit: (conn: connection.Connection, password: string, tunnelPassword: string) => Promise<void>;
   onTest: (conn: connection.Connection, password: string, tunnelPassword: string) => Promise<void>;
   isSubmitting?: boolean;
+  testSuccess?: boolean;
+  testError?: string | null;
 }
 
-export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: ConnectionFormProps) {
+export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, testSuccess, testError }: ConnectionFormProps) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<connection.Connection>(initialData || {
+  const [formData, setFormData] = useState<connection.Connection>(initialData || new connection.Connection({
     id: "",
     name: "",
     driver: "mysql",
@@ -22,16 +24,16 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
     username: "root",
     database: "",
     ssl_mode: "disable",
-    tunnel: {
+    tunnel: new connection.Tunnel({
       enabled: false,
       host: "",
       port: 22,
       username: "",
-      auth_method: "password" as any,
-    },
-    created_at: new Date(),
-    updated_at: new Date(),
-  });
+      auth_method: "password",
+    }),
+    created_at: "",
+    updated_at: "",
+  }));
 
   const [password, setPassword] = useState("");
   const [tunnelPassword, setTunnelPassword] = useState("");
@@ -39,25 +41,26 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // Create a mutable copy to avoid directly modifying formData
+    const updatedFormData = { ...formData }; 
+
     if (name.startsWith("tunnel.")) {
       const field = name.split(".")[1];
-      setFormData(prev => ({
-        ...prev,
-        tunnel: { ...prev.tunnel, [field]: field === "port" ? parseInt(value) : value }
-      }));
+      // Ensure tunnel is a mutable object if it's a class instance
+      updatedFormData.tunnel = { ...updatedFormData.tunnel, [field]: field === "port" ? parseInt(value) : value };
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: name === "port" ? parseInt(value) : value
-      }));
+      (updatedFormData as any)[name] = name === "port" ? parseInt(value) : value;
     }
+    // Set state with a new Connection instance to ensure convertValues is present
+    setFormData(new connection.Connection(updatedFormData));
   };
 
   const handleTunnelToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      tunnel: { ...prev.tunnel, enabled: e.target.checked }
-    }));
+    // Create a mutable copy to avoid directly modifying formData
+    const updatedFormData = { ...formData };
+    updatedFormData.tunnel = { ...updatedFormData.tunnel, enabled: e.target.checked };
+    // Set state with a new Connection instance
+    setFormData(new connection.Connection(updatedFormData));
   };
 
   const handleTest = async (e: React.MouseEvent) => {
@@ -189,13 +192,28 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
         </div>
       </section>
 
+      {/* Feedback section */}
+      {testError && (
+        <div className={`${styles.feedback} ${styles.error}`}>
+          <XCircle size={16} />
+          <span>{testError}</span>
+        </div>
+      )}
+      {testSuccess && (
+        <div className={`${styles.feedback} ${styles.success}`}>
+          <CheckCircle size={16} />
+          <span>{t("app.connections.test.success", "Connection successful!")}</span>
+        </div>
+      )}
+
+
       <div className={styles.actions}>
         <button type="button" className={styles.btnSecondary} onClick={handleTest} disabled={isTesting || isSubmitting}>
-          {isTesting ? <Loader2 size={14} className="animate-spin" /> : null}
+          {isTesting ? <Loader2 size={14} className={styles.rotating} /> : null}
           {t("app.connections.form.test", "Test Connection")}
         </button>
         <button type="submit" className={styles.btnPrimary} disabled={isTesting || isSubmitting}>
-          {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : null}
+          {isSubmitting ? <Loader2 size={14} className={styles.rotating} /> : null}
           {t("app.connections.form.save", "Save Connection")}
         </button>
       </div>

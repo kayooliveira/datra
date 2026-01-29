@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useSettings } from "../contexts/settings-context";
 import { useTranslation } from "react-i18next";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
@@ -17,6 +16,7 @@ import {
 } from "../contexts/status-bar-context";
 import { StatusBar } from "../components/status-bar/status-bar";
 import pkg from "../../package.json";
+import { useSessionStore } from "../stores/sessionStore";
 
 export const Route = createRootRoute({
   component: () => (
@@ -31,6 +31,7 @@ function RootLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem, removeItem } = useStatusBar();
+  const { setIsCreatingConnection } = useSessionStore();
 
   const modifier = platformModifier === "Ctrl" ? "ctrl" : "meta";
 
@@ -38,7 +39,7 @@ function RootLayout() {
     `${modifier}+n`,
     (e) => {
       e.preventDefault();
-      navigate({ to: "/connections/new" });
+      setIsCreatingConnection(true);
     },
     { enableOnFormTags: true },
   );
@@ -161,7 +162,6 @@ function RootLayout() {
         </Panel>
       </PanelGroup>
       <StatusBar />
-      {/* <TanStackRouterDevtools /> */}
     </div>
   );
 }
