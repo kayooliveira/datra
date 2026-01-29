@@ -31,9 +31,9 @@ tests/
 Go 1.23 (Backend), React 18.2.0 (Frontend): Follow standard conventions
 
 ## Recent Changes
+- 007-connection-manager: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 006-manage-connections: Added Go 1.23, React 18.2.0, TypeScript 5.x + Wails v2.11.0, `lucide-react`, `@tanstack/react-router`, `gopkg.in/yaml.v3`, `zalando/go-keyring` (Proposed for secure storage)
 - 005-global-sidebar: Added React 18.2.0 (Frontend), TypeScript (Frontend) + `lucide-react` (Icons), `@tanstack/react-router` (Routing), `react-resizable-panels`
-- 004-frontend-routing: Added React 18.2.0 (Frontend), Go 1.23 (Backend), TypeScrip + `@tanstack/react-router`, `lucide-react`
 
 
 <!-- MANUAL ADDITIONS START -->
