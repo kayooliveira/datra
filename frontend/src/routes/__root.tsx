@@ -18,6 +18,7 @@ import { StatusBar } from "../components/status-bar/status-bar";
 import pkg from "../../package.json";
 import { useSessionStore } from "../stores/sessionStore";
 import { Toaster } from "sonner";
+import { SystemStatus } from "../components/status-bar/system-status";
 
 export const Route = createRootRoute({
   component: () => (
@@ -65,6 +66,14 @@ function RootLayout() {
   // Register Global Status Bar Items
   useEffect(() => {
     const handleRefresh = () => window.location.reload();
+
+    // 1. System Status (Left, High Priority)
+    addItem({
+      id: "system-status",
+      section: "left",
+      priority: 1000, // Highest priority
+      content: <SystemStatus />
+    });
 
     addItem({
       id: "refresh-app",
@@ -118,11 +127,8 @@ function RootLayout() {
       ),
     });
 
-    // Cleanup not strictly necessary for root items but good practice if component unmounts
     return () => {
-      // In a real app we might want to keep these persistent, but for now:
-      // removeItem("refresh-app");
-      // ...
+      // removeItem("system-status");
     };
   }, [addItem, removeItem, t, platformModifier]);
 
@@ -136,6 +142,8 @@ function RootLayout() {
 
   return (
     <div className={styles.container}>
+      {/* Toaster removed or kept for system-critical non-operation alerts if needed, 
+          but primarily replacing with Status Bar notifications as requested */}
       <Toaster theme={theme as any} richColors />
       <PanelGroup
         dir="horizontal"

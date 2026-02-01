@@ -24,7 +24,7 @@
   background: none;
   border: none;
   color: inherit;
-  cursor: pointer;
+  cursor: default;
   display: flex;
   align-items: center;
   gap: 4px;

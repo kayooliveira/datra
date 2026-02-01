@@ -27,3 +27,16 @@ Thumbs.db
 
 # Wails
 wails.json.user
+# Go
+*.exe
+*.test
+vendor/
+*.out
+
+# Node.js
+node_modules/
+dist/
+build/
+*.log
+.env*
+coverage/

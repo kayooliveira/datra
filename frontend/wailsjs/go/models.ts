@@ -28,14 +28,13 @@ export namespace connection {
 	    driver: string;
 	    host: string;
 	    port: number;
+	    database: string;
 	    username: string;
-	    database?: string;
 	    ssl_mode: string;
+	    params: Record<string, string>;
 	    tunnel: Tunnel;
-	    // Go type: time
-	    created_at: any;
-	    // Go type: time
-	    updated_at: any;
+	    created_at: string;
+	    updated_at: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Connection(source);
@@ -48,12 +47,13 @@ export namespace connection {
 	        this.driver = source["driver"];
 	        this.host = source["host"];
 	        this.port = source["port"];
-	        this.username = source["username"];
 	        this.database = source["database"];
+	        this.username = source["username"];
 	        this.ssl_mode = source["ssl_mode"];
+	        this.params = source["params"];
 	        this.tunnel = this.convertValues(source["tunnel"], Tunnel);
-	        this.created_at = this.convertValues(source["created_at"], null);
-	        this.updated_at = this.convertValues(source["updated_at"], null);
+	        this.created_at = source["created_at"];
+	        this.updated_at = source["updated_at"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -73,6 +73,78 @@ export namespace connection {
 		    }
 		    return a;
 		}
+	}
+	export class DatabaseTable {
+	    schema: string;
+	    name: string;
+	    type: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DatabaseTable(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.schema = source["schema"];
+	        this.name = source["name"];
+	        this.type = source["type"];
+	    }
+	}
+	export class QueryResult {
+	    columns: string[];
+	    rows: any[][];
+	    error?: string;
+	    time_ms: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new QueryResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.columns = source["columns"];
+	        this.rows = source["rows"];
+	        this.error = source["error"];
+	        this.time_ms = source["time_ms"];
+	    }
+	}
+	export class SessionSummary {
+	    id: string;
+	    profile_id: string;
+	    profile_name: string;
+	    status: string;
+	    connected_at: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SessionSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.profile_id = source["profile_id"];
+	        this.profile_name = source["profile_name"];
+	        this.status = source["status"];
+	        this.connected_at = source["connected_at"];
+	    }
+	}
+	export class TableColumn {
+	    name: string;
+	    type: string;
+	    nullable: boolean;
+	    primary_key: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new TableColumn(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.type = source["type"];
+	        this.nullable = source["nullable"];
+	        this.primary_key = source["primary_key"];
+	    }
 	}
 
 }

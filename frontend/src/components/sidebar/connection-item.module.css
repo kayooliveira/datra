@@ -1,18 +1,42 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
-  padding: 0 8px; /* Container padding for hover effect breathing room */
+  padding: 0 4px;
   margin-bottom: 1px;
+}
+
+.connected {
+  background-color: rgba(0, 127, 212, 0.05);
+}
+
+.expandBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-xs);
+}
+
+.expandBtn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
 }
 
 .button {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
+  gap: 6px;
+  padding: 6px 4px;
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
@@ -29,9 +53,19 @@
   color: var(--text-bright);
 }
 
-.button:focus-visible {
-  outline: 2px solid var(--border-focus);
-  outline-offset: -2px;
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.online {
+  background-color: #4caf50;
+  opacity: 1;
+  box-shadow: 0 0 4px #4caf50;
 }
 
 .name {
@@ -47,26 +81,84 @@
   opacity: 0.8;
 }
 
-.editBtn {
+.actions {
+  display: flex;
+  opacity: 0;
+}
+
+.container:hover .actions {
+  opacity: 1;
+}
+
+.actionBtn {
   background: transparent;
   border: none;
   color: var(--text-muted);
   padding: 4px;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
   display: flex;
   align-items: center;
   border-radius: var(--radius-sm);
-  margin-left: 2px;
 }
 
-.editBtn:hover {
+.actionBtn:hover {
   background-color: var(--bg-active);
   color: var(--text-bright);
 }
 
-.container:hover .editBtn,
-.editBtn:focus-visible {
-  opacity: 1;
+.metadataContainer {
+  border-left: 1px solid var(--border-subtle);
+  margin-left: 12px;
+  padding-left: 4px;
+}
+
+/* Context Menu */
+.menuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.contextMenu {
+  position: fixed;
+  z-index: 1001;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  min-width: 160px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: var(--font-sm);
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.menuItem:hover {
+  background-color: var(--primary);
+  color: var(--primary-fg);
+}
+
+.menuDivider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: 4px 0;
+}
+
+.menuDanger:hover {
+  background-color: var(--danger) !important;
 }

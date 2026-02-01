@@ -3,7 +3,7 @@
 import {connection} from '../models';
 import {main} from '../models';
 
-export function CreateConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<string>;
+export function CreateConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<connection.Connection>;
 
 export function DeleteConnection(arg1:string):Promise<void>;
 
@@ -19,8 +19,8 @@ export function Greet(arg1:string):Promise<string>;
 
 export function SaveSettings(arg1:main.UserPreferences):Promise<void>;
 
-export function TestConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<void>;
+export function TestConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<string>;
 
-export function UpdateConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<void>;
+export function UpdateConnection(arg1:connection.Connection,arg2:string,arg3:string):Promise<connection.Connection>;
 
 export function UpdateMenu(arg1:string):Promise<void>;

@@ -63,6 +63,16 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden; /* App-like behavior */
+  
+  /* Disable text selection by default */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Allow selection in specific interactive/data areas */
+input, textarea, [contenteditable="true"], .selectable, code, pre, table, .sql-editor {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 #app {
