@@ -91,7 +91,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
         <div className={styles.grid}>
              <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>{t("app.connections.form.name", "Connection Name")}</label>
-                <input className={styles.input} name="name" value={formData.name} onChange={handleChange} required placeholder="My Production DB" autoFocus />
+                <input className={styles.input} name="name" value={formData.name} onChange={handleChange} required placeholder="My Production DB" autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
 
             <div className={styles.group}>
@@ -105,13 +105,13 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
             </div>
              <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.database", "Database Name")}</label>
-                <input className={styles.input} name="database" value={formData.database} onChange={handleChange} placeholder="optional" />
+                <input className={styles.input} name="database" value={formData.database} onChange={handleChange} placeholder="optional" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
 
             <div className={`${styles.group} ${styles.fullWidth}`} style={{ gridTemplateColumns: "2fr 1fr", display: "grid", gap: "16px" }}>
                 <div className={styles.group}>
                     <label className={styles.label}>{t("app.connections.form.host", "Host")}</label>
-                    <input className={styles.input} name="host" value={formData.host} onChange={handleChange} required placeholder="127.0.0.1" />
+                    <input className={styles.input} name="host" value={formData.host} onChange={handleChange} required placeholder="127.0.0.1" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                 </div>
                 <div className={styles.group}>
                     <label className={styles.label}>{t("app.connections.form.port", "Port")}</label>
@@ -121,11 +121,11 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
 
              <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.username", "Username")}</label>
-                <input className={styles.input} name="username" value={formData.username} onChange={handleChange} required />
+                <input className={styles.input} name="username" value={formData.username} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.password", "Password")}</label>
-                <input className={styles.input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+                <input className={styles.input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
         </div>
       </section>
@@ -162,7 +162,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
                              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px'}}>
                                 <div className={styles.group}>
                                     <label className={styles.label}>{t("app.connections.form.ssh_host", "SSH Host")}</label>
-                                    <input className={styles.input} name="tunnel.host" value={formData.tunnel.host} onChange={handleChange} required />
+                                    <input className={styles.input} name="tunnel.host" value={formData.tunnel.host} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                                 </div>
                                 <div className={styles.group}>
                                     <label className={styles.label}>{t("app.connections.form.ssh_port", "SSH Port")}</label>
@@ -173,7 +173,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
 
                          <div className={styles.group}>
                             <label className={styles.label}>{t("app.connections.form.ssh_user", "SSH User")}</label>
-                            <input className={styles.input} name="tunnel.username" value={formData.tunnel.username} onChange={handleChange} required />
+                            <input className={styles.input} name="tunnel.username" value={formData.tunnel.username} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                         </div>
                         <div className={styles.group}>
                              <label className={styles.label}>{t("app.connections.form.ssh_auth", "Auth Method")}</label>
@@ -184,7 +184,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
                         </div>
                         <div className={`${styles.group} ${styles.fullWidth}`}>
                             <label className={styles.label}>{t("app.connections.form.ssh_password", "SSH Password / Key Passphrase")}</label>
-                            <input className={styles.input} type="password" value={tunnelPassword} onChange={(e) => setTunnelPassword(e.target.value)} />
+                            <input className={styles.input} type="password" value={tunnelPassword} onChange={(e) => setTunnelPassword(e.target.value)} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                         </div>
                     </div>
                 </div>
