@@ -5,6 +5,7 @@ import { connection } from "../../../wailsjs/go/models";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import styles from "./connection-page.module.css";
 
 export const Route = createFileRoute("/connections/$id")({
@@ -37,9 +38,10 @@ function EditConnectionComponent() {
     setIsSubmitting(true);
     try {
       await UpdateConnection(conn, password, tunnelPassword);
+      toast.success(t("app.connections.save.success", "Connection saved successfully"));
       navigate({ to: "/" });
-    } catch (error) {
-      console.error("Failed to update connection:", error);
+    } catch (error: any) {
+      toast.error(error.message || String(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -48,19 +50,19 @@ function EditConnectionComponent() {
   const handleDelete = async () => {
     try {
       await DeleteConnection(id);
+      toast.success(t("app.connections.delete.success", "Connection deleted successfully"));
       navigate({ to: "/" });
-    } catch (error) {
-      console.error("Failed to delete connection:", error);
+    } catch (error: any) {
+      toast.error(error.message || String(error));
     }
   };
 
   const handleTest = async (conn: connection.Connection, password: string, tunnelPassword: string) => {
-    try {
-      await TestConnection(conn, password, tunnelPassword);
-      alert(t("app.connections.test.success", "Connection successful!"));
-    } catch (error: any) {
-      alert(t("app.connections.test.error", "Connection failed: ") + error);
-    }
+    toast.promise(TestConnection(conn, password, tunnelPassword), {
+      loading: t("app.connections.connecting", "Establishing Connection..."),
+      success: t("app.connections.test.success", "Connection successful!"),
+      error: (err) => t("app.connections.test.error", "Connection failed: ") + (err.message || String(err)),
+    });
   };
 
   if (!initialData) return <div className={styles.loading}>{t("app.loading")}</div>;

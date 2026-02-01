@@ -17,6 +17,7 @@ import {
 import { StatusBar } from "../components/status-bar/status-bar";
 import pkg from "../../package.json";
 import { useSessionStore } from "../stores/sessionStore";
+import { Toaster } from "sonner";
 
 export const Route = createRootRoute({
   component: () => (
@@ -27,7 +28,7 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
-  const { platformModifier } = useSettings();
+  const { platformModifier, theme } = useSettings();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem, removeItem } = useStatusBar();
@@ -135,6 +136,7 @@ function RootLayout() {
 
   return (
     <div className={styles.container}>
+      <Toaster theme={theme as any} richColors />
       <PanelGroup
         dir="horizontal"
         onLayoutChanged={handleLayoutChange}

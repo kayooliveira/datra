@@ -5,6 +5,7 @@ import { connection } from "../../../wailsjs/go/models";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import styles from "./connection-page.module.css";
 
 export const Route = createFileRoute("/connections/new")({
@@ -15,32 +16,26 @@ function NewConnectionComponent() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [testError, setTestError] = useState<string | null>(null);
-  const [testSuccess, setTestSuccess] = useState(false);
 
   const handleSubmit = async (conn: connection.Connection, password: string, tunnelPassword: string) => {
     setIsSubmitting(true);
-    setTestError(null);
-    setTestSuccess(false);
     try {
       await CreateConnection(conn, password, tunnelPassword);
+      toast.success(t("app.connections.save.success", "Connection saved successfully"));
       navigate({ to: "/" });
     } catch (error: any) {
-      setTestError(error.message || String(error));
+      toast.error(error.message || String(error));
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleTest = async (conn: connection.Connection, password: string, tunnelPassword: string) => {
-    setTestError(null);
-    setTestSuccess(false);
-    try {
-      await TestConnection(conn, password, tunnelPassword);
-      setTestSuccess(true);
-    } catch (error: any) {
-      setTestError(error.message || String(error));
-    }
+    toast.promise(TestConnection(conn, password, tunnelPassword), {
+      loading: t("app.connections.connecting", "Establishing Connection..."),
+      success: t("app.connections.test.success", "Connection successful!"),
+      error: (err) => t("app.connections.test.error", "Connection failed: ") + (err.message || String(err)),
+    });
   };
 
   return (
@@ -56,8 +51,6 @@ function NewConnectionComponent() {
           onSubmit={handleSubmit}
           onTest={handleTest}
           isSubmitting={isSubmitting}
-          testError={testError}
-          testSuccess={testSuccess}
         />
       </div>
     </div>

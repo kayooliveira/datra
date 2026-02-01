@@ -9,11 +9,9 @@ interface ConnectionFormProps {
   onSubmit: (conn: connection.Connection, password: string, tunnelPassword: string) => Promise<void>;
   onTest: (conn: connection.Connection, password: string, tunnelPassword: string) => Promise<void>;
   isSubmitting?: boolean;
-  testSuccess?: boolean;
-  testError?: string | null;
 }
 
-export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, testSuccess, testError }: ConnectionFormProps) {
+export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: ConnectionFormProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<connection.Connection>(initialData || new connection.Connection({
     id: "",
@@ -191,21 +189,6 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting, te
             )}
         </div>
       </section>
-
-      {/* Feedback section */}
-      {testError && (
-        <div className={`${styles.feedback} ${styles.error}`}>
-          <XCircle size={16} />
-          <span>{testError}</span>
-        </div>
-      )}
-      {testSuccess && (
-        <div className={`${styles.feedback} ${styles.success}`}>
-          <CheckCircle size={16} />
-          <span>{t("app.connections.test.success", "Connection successful!")}</span>
-        </div>
-      )}
-
 
       <div className={styles.actions}>
         <button type="button" className={styles.btnSecondary} onClick={handleTest} disabled={isTesting || isSubmitting}>
