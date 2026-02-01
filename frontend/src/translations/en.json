@@ -10,10 +10,16 @@
       "no_connections": "No connections yet",
       "create_connection": "Create",
       "new_connection_tooltip": "New Connection",
-      "new_connection": "New Connection"
+      "new_connection": "New Connection",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "connections": {
       "title": "Connections",
+      "connecting": "Establishing Connection...",
+      "connecting_detail": "Please wait while we initialize the session.",
       "new": {
         "title": "New Connection"
       },
@@ -52,6 +58,22 @@
         "save": "Save Connection"
       }
     },
+    "editor": {
+      "live_session": "Live Session",
+      "active_connection": "Active Connection",
+      "status": "Status",
+      "connected": "Connected",
+      "session_started": "Session Started",
+      "run_query": "RUN QUERY",
+      "results": "Results",
+      "executing": "Executing...",
+      "error": "Execution Error",
+      "empty_results": "Run a query to see results here"
+    },
+    "dashboard": {
+      "welcome": "Welcome to Datra",
+      "select_hint": "Select a database connection to start working."
+    },
     "common": {
       "cancel": "Cancel",
       "delete": "Delete",
@@ -80,6 +102,13 @@
   "menu": {
     "file": "File",
     "settings": "Settings",
-    "quit": "Quit"
+    "quit": "Quit",
+    "edit": "Edit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "select_all": "Select All"
   }
 }

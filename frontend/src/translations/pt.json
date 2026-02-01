@@ -10,10 +10,16 @@
       "no_connections": "Nenhuma conexão ainda",
       "create_connection": "Criar",
       "new_connection_tooltip": "Nova Conexão",
-      "new_connection": "Nova Conexão"
+      "new_connection": "Nova Conexão",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "edit": "Editar",
+      "delete": "Excluir"
     },
     "connections": {
       "title": "Conexões",
+      "connecting": "Estabelecendo Conexão...",
+      "connecting_detail": "Por favor, aguarde enquanto inicializamos a sessão.",
       "new": {
         "title": "Nova Conexão"
       },
@@ -52,6 +58,22 @@
         "save": "Salvar Conexão"
       }
     },
+    "editor": {
+      "live_session": "Sessão Ativa",
+      "active_connection": "Conexão Ativa",
+      "status": "Status",
+      "connected": "Conectado",
+      "session_started": "Início da Sessão",
+      "run_query": "EXECUTAR QUERY",
+      "results": "Resultados",
+      "executing": "Executando...",
+      "error": "Erro de Execução",
+      "empty_results": "Execute uma query para ver os resultados aqui"
+    },
+    "dashboard": {
+      "welcome": "Bem-vindo ao Datra",
+      "select_hint": "Selecione uma conexão de banco de dados para começar a trabalhar."
+    },
     "common": {
       "cancel": "Cancelar",
       "delete": "Excluir",
@@ -80,6 +102,13 @@
   "menu": {
     "file": "Arquivo",
     "settings": "Configurações",
-    "quit": "Sair"
+    "quit": "Sair",
+    "edit": "Editar",
+    "undo": "Desfazer",
+    "redo": "Refazer",
+    "cut": "Recortar",
+    "copy": "Copiar",
+    "paste": "Colar",
+    "select_all": "Selecionar Tudo"
   }
 }

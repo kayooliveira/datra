@@ -27,6 +27,13 @@ func main() {
 	fileLabel := T(lang, "menu.file")
 	settingsLabel := T(lang, "menu.settings")
 	quitLabel := T(lang, "menu.quit")
+	editLabel := T(lang, "menu.edit")
+	undoLabel := T(lang, "menu.undo")
+	redoLabel := T(lang, "menu.redo")
+	cutLabel := T(lang, "menu.cut")
+	copyLabel := T(lang, "menu.copy")
+	pasteLabel := T(lang, "menu.paste")
+	selectAllLabel := T(lang, "menu.select_all")
 
 	// Create a custom menu
 	AppMenu := menu.NewMenu()
@@ -37,6 +44,28 @@ func main() {
 	FileMenu.AddSeparator()
 	FileMenu.AddText(quitLabel, keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		runtime.Quit(app.ctx)
+	})
+
+	EditMenu := AppMenu.AddSubmenu(editLabel)
+	EditMenu.AddText(undoLabel, keys.CmdOrCtrl("z"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('undo')")
+	})
+	EditMenu.AddText(redoLabel, keys.CmdOrCtrl("shift+z"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('redo')")
+	})
+	EditMenu.AddSeparator()
+	EditMenu.AddText(cutLabel, keys.CmdOrCtrl("x"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('cut')")
+	})
+	EditMenu.AddText(copyLabel, keys.CmdOrCtrl("c"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('copy')")
+	})
+	EditMenu.AddText(pasteLabel, keys.CmdOrCtrl("v"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('paste')")
+	})
+	EditMenu.AddSeparator()
+	EditMenu.AddText(selectAllLabel, keys.CmdOrCtrl("a"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(app.ctx, "document.execCommand('selectAll')")
 	})
 
 	// Only use native menu on macOS (Darwin)
@@ -66,6 +95,7 @@ func main() {
 		Menu:             menuToUse,
 		Bind: []interface{}{
 			app,
+			app.ConnectionService,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
