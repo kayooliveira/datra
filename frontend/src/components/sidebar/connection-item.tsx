@@ -7,6 +7,7 @@ import {
   Trash2,
   ChevronRight,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import styles from "./connection-item.module.css";
@@ -21,6 +22,7 @@ import { useSessionStore } from "../../stores/sessionStore";
 import { MetadataTree } from "../connections/MetadataTree";
 import { useTranslation } from "react-i18next";
 import { useNotificationStore } from "../../stores/notificationStore";
+import { useTabStore } from "../../stores/tabStore";
 
 interface ConnectionItemProps {
   connection: connection.Connection;
@@ -33,6 +35,8 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   const { data: sessions } = useActiveSessions();
   const connectMutation = useConnect();
@@ -40,7 +44,8 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   const deleteMutation = useDeleteProfile();
   const { setActiveSessionId, activeSessionId, setIsConnectingSession } =
     useSessionStore();
-  
+  const { initializeMainTab, clearTabs } = useTabStore();
+
   const { setError } = useNotificationStore();
 
   const session = sessions?.find((s) => s.profile_id === connection.id);
@@ -49,6 +54,9 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   useEffect(() => {
     if (isConnected) {
       setIsExpanded(true);
+    } else {
+      // Reset disconnecting state when actually disconnected
+      setIsDisconnecting(false);
     }
   }, [isConnected]);
 
@@ -63,29 +71,54 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
     e?.preventDefault();
     setShowMenu(false);
 
-    // Navegar para a home para garantir que o usuário veja a conexão acontecendo
-    navigate({ to: "/" });
+    if (isConnecting) return; // Prevent double clicks
+
+    setIsConnecting(true);
     setIsConnectingSession(true);
+    navigate({ to: "/" });
 
     try {
       const sessionId = await connectMutation.mutateAsync(connection.id);
       setActiveSessionId(sessionId);
+      initializeMainTab(sessionId, connection.name, connection.id);
       setIsExpanded(true);
     } catch (err: any) {
       setError(t("app.connections.test.error"), err.message || String(err));
     } finally {
+      setIsConnecting(false);
       setIsConnectingSession(false);
     }
   };
 
   const handleDisconnect = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
+    e?.preventDefault();
+    
+    if (!session || isDisconnecting) return; // Prevent double clicks
+
+    // Close menu immediately and set states
     setShowMenu(false);
-    if (session) {
+    setIsDisconnecting(true);
+    setIsExpanded(false);
+
+    try {
       await disconnectMutation.mutateAsync(session.id);
+
+      // If this was the active session, clear it
       if (activeSessionId === session.id) {
         setActiveSessionId(null);
+        clearTabs();
       }
+    } catch (err: any) {
+      setError(
+        t("app.connections.disconnect.error", "Disconnect failed"),
+        err.message || String(err),
+      );
+      // Re-expand on error
+      setIsExpanded(true);
+    } finally {
+      // Don't set to false here - let useEffect handle it when isConnected changes
+      // This prevents the flickering where it shows as disconnected before it actually is
     }
   };
 
@@ -130,14 +163,27 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
         </button>
         <button
           onClick={() => onSelect(connection.id)}
-          className={styles.button}
+          className={`${styles.button} ${isConnecting || isDisconnecting ? styles.loading : ""}`}
           title={connection.name}
+          disabled={isConnecting || isDisconnecting}
         >
           <div
-            className={`${styles.statusDot} ${isConnected ? styles.online : ""}`}
+            className={`${styles.statusDot} ${
+              isConnected ? styles.online : ""
+            } ${isConnecting ? styles.connecting : ""} ${isDisconnecting ? styles.disconnecting : ""}`}
           />
-          <Database size={14} className={styles.icon} />
-          <span className={styles.name}>{connection.name}</span>
+          {isConnecting || isDisconnecting ? (
+            <Loader2 size={14} className={styles.spinner} />
+          ) : (
+            <Database size={14} className={styles.icon} />
+          )}
+          <span className={styles.name}>
+            {isConnecting
+              ? t("app.connections.connecting", "Connecting...")
+              : isDisconnecting
+                ? t("app.connections.disconnecting", "Disconnecting...")
+                : connection.name}
+          </span>
         </button>
         <div className={styles.actions}>
           <button
@@ -167,12 +213,30 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
             style={{ top: menuPos.y, left: menuPos.x }}
           >
             {isConnected ? (
-              <button onClick={handleDisconnect} className={styles.menuItem}>
-                <PowerOff size={14} /> {t("app.sidebar.disconnect")}
+              <button
+                onClick={handleDisconnect}
+                className={styles.menuItem}
+                disabled={isDisconnecting}
+              >
+                {isDisconnecting ? (
+                  <Loader2 size={14} className={styles.menuSpinner} />
+                ) : (
+                  <PowerOff size={14} />
+                )}
+                {t("app.sidebar.disconnect")}
               </button>
             ) : (
-              <button onClick={handleConnect} className={styles.menuItem}>
-                <Power size={14} /> {t("app.sidebar.connect")}
+              <button
+                onClick={handleConnect}
+                className={styles.menuItem}
+                disabled={isConnecting}
+              >
+                {isConnecting ? (
+                  <Loader2 size={14} className={styles.menuSpinner} />
+                ) : (
+                  <Power size={14} />
+                )}
+                {t("app.sidebar.connect")}
               </button>
             )}
             <button onClick={handleEdit} className={styles.menuItem}>

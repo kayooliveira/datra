@@ -1,0 +1,176 @@
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background-color: transparent;
+  cursor: pointer;
+  min-width: 100px;
+  max-width: 180px;
+  height: auto;
+  min-height: 36px;
+  font-size: 13px;
+  color: var(--text-muted);
+  user-select: none;
+  transition: all 0.1s ease;
+  position: relative;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.tab:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+}
+
+.active {
+  background-color: var(--bg-editor);
+  color: var(--text-bright);
+  border-top: 2px solid var(--primary);
+  border-bottom: none; /* Connect seamlessly to editor */
+}
+
+/* Make active tab visually "pop" slightly */
+.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary);
+}
+
+.icon {
+  opacity: 0.7;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.connectionLabel {
+  font-size: 9px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.active .connectionLabel {
+  opacity: 0.8;
+  color: var(--primary);
+}
+
+.titleInput {
+  flex: 1;
+  background: var(--bg-input);
+  color: var(--text-bright);
+  border: 1px solid var(--border-focus);
+  border-radius: 2px;
+  padding: 2px 4px;
+  font-size: inherit;
+  outline: none;
+  min-width: 0;
+  height: 24px;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  width: 20px;
+  height: 20px;
+  transition: all 0.1s;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.tab:hover .closeBtn,
+.active .closeBtn {
+  opacity: 1;
+}
+
+.closeBtn:hover {
+  background-color: rgba(128, 128, 128, 0.2);
+  color: var(--text-bright);
+}
+
+/* Context Menu - styled like native/VSCode menus */
+.contextMenu {
+  position: fixed;
+  z-index: 1000;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 4px;
+  min-width: 160px;
+}
+
+.menuItem {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.1s;
+}
+
+.menuItem:hover {
+  background-color: var(--primary);
+  color: var(--primary-fg);
+}
+
+.menuDivider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: 4px 0;
+}
+
+/* Main tab - special styling, no close button */
+.mainTab {
+  min-width: 100px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.mainTab .icon {
+  color: var(--primary);
+  opacity: 1;
+}
+
+.mainTab.active .icon {
+  color: var(--primary);
+}

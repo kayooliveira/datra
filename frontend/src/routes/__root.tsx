@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Layout, Panel, Group as PanelGroup } from "react-resizable-panels";
+import { Panel, Group, Separator } from "react-resizable-panels";
 import { Sidebar } from "../components/sidebar/sidebar";
-import { ResizableHandle } from "../components/sidebar/resizable-handle";
 import { useHotkeys } from "react-hotkeys-hook";
 import styles from "./root.module.css";
 import { RefreshCw, FilePlus, FolderOpen, Tag } from "lucide-react";
@@ -29,7 +28,8 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
-  const { platformModifier, theme } = useSettings();
+  const { platformModifier, settings } = useSettings();
+  const theme = settings.theme;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem, removeItem } = useStatusBar();
@@ -63,16 +63,14 @@ function RootLayout() {
     return () => unbind();
   }, [navigate]);
 
-  // Register Global Status Bar Items
   useEffect(() => {
     const handleRefresh = () => window.location.reload();
 
-    // 1. System Status (Left, High Priority)
     addItem({
       id: "system-status",
       section: "left",
-      priority: 1000, // Highest priority
-      content: <SystemStatus />
+      priority: 1000,
+      content: <SystemStatus />,
     });
 
     addItem({
@@ -121,56 +119,30 @@ function RootLayout() {
       priority: 0,
       content: (
         <span className={styles.statusBarText} title={`Version ${pkg.version}`}>
-          <Tag size={10} />
-          v{pkg.version}
+          <Tag size={10} />v{pkg.version}
         </span>
       ),
     });
 
-    return () => {
-      // removeItem("system-status");
-    };
+    return () => {};
   }, [addItem, removeItem, t, platformModifier]);
-
-  const handleLayoutChange = (layout: Layout) => {
-    localStorage.setItem("sidebar-layout-v5", JSON.stringify(layout));
-  };
-
-  const defaultLayout = localStorage.getItem("sidebar-layout-v5")
-    ? JSON.parse(localStorage.getItem("sidebar-layout-v5")!)
-    : { sidebar: 20, "main-content": 80 };
 
   return (
     <div className={styles.container}>
-      {/* Toaster removed or kept for system-critical non-operation alerts if needed, 
-          but primarily replacing with Status Bar notifications as requested */}
-      <Toaster theme={theme as any} richColors />
-      <PanelGroup
-        dir="horizontal"
-        onLayoutChanged={handleLayoutChange}
-        style={{ flex: 1 }}
-      >
-        <Panel
-          id="sidebar"
-          defaultSize={defaultLayout["sidebar"]}
-          minSize="30%"
-          maxSize="50%"
-        >
+      <Toaster theme={theme as "light" | "dark" | "system"} richColors />
+      <Group orientation="horizontal" className={styles.panelGroup}>
+        <Panel id="sidebar" defaultSize="20%" minSize="15%" maxSize="35%">
           <Sidebar />
         </Panel>
-        <ResizableHandle />
-        <Panel
-          id="main-content"
-          defaultSize={defaultLayout["main-content"]}
-          minSize="50%"
-        >
+        <Separator className={styles.resizeHandleHorizontal} />
+        <Panel id="main-content" defaultSize="80%" minSize="50%">
           <div className={styles.mainWrapper}>
             <main className={styles.main}>
               <Outlet />
             </main>
           </div>
         </Panel>
-      </PanelGroup>
+      </Group>
       <StatusBar />
     </div>
   );

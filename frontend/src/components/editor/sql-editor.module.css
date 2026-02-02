@@ -1,0 +1,211 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.panelGroup {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelContent {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure panels have proper height */
+.panelGroup > [data-panel] {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.editorPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  background-color: var(--bg-editor);
+}
+
+.codeMirror {
+  flex: 1;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.codeMirror .cm-editor {
+  height: 100%;
+}
+
+.codeMirror .cm-scroller {
+  overflow: auto;
+}
+
+.resultsPane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  background-color: var(--bg-app);
+  overflow: hidden;
+}
+
+.resultsContent {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.resizeHandle {
+  height: 4px;
+  background-color: var(--border-subtle);
+  cursor: row-resize;
+  transition: background-color 150ms;
+}
+
+.resizeHandle:hover,
+.resizeHandle[data-state="dragging"] {
+  background-color: var(--primary);
+}
+
+.executingIndicator {
+  background-color: rgba(0, 127, 212, 0.1);
+  color: var(--primary);
+  font-size: 11px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.executingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  animation: pulse 1.5s infinite;
+}
+
+.errorPane {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(248, 81, 73, 0.1);
+  color: var(--danger);
+  padding: 16px;
+  font-family: monospace;
+  font-size: 13px;
+  overflow: auto;
+  z-index: 10;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.errorLabel {
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-decoration: underline;
+}
+
+.emptyState {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 13px;
+}
+
+.historyPane {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  background-color: var(--bg-panel);
+  overflow: hidden;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Wrapper for dashboard integration */
+.editorWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.noConnectionPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-editor);
+}
+
+.noConnectionText {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.returnButton {
+  padding: 8px 16px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-size: var(--font-sm);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.returnButton:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Autocomplete Customization */
+.codeMirror :global(.cm-tooltip-autocomplete) {
+  background-color: var(--bg-panel) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+.codeMirror :global(.cm-tooltip.cm-tooltip-autocomplete > ul) {
+  font-family: inherit;
+}
+
+.codeMirror :global(.cm-tooltip-autocomplete ul li[aria-selected]) {
+  background-color: var(--bg-active) !important;
+  color: var(--text-bright) !important;
+}
+
+.codeMirror :global(.cm-completionIcon) {
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.codeMirror :global(.cm-completionDetail) {
+  color: #569cd6 !important;
+  font-style: italic;
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-left: 1.5em;
+}

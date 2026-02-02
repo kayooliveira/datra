@@ -7,6 +7,11 @@
   overflow: hidden;
 }
 
+.panelGroup {
+  flex: 1;
+  overflow: hidden;
+}
+
 .mainWrapper {
   height: 100%;
   display: flex;
@@ -15,8 +20,32 @@
 
 .main {
   flex: 1;
-  overflow: hidden; /* Prevent double scrollbars */
+  overflow: hidden;
   position: relative;
+}
+
+.resizeHandleHorizontal {
+  width: 4px;
+  background-color: var(--border-subtle);
+  cursor: col-resize;
+  transition: background-color 150ms;
+}
+
+.resizeHandleHorizontal:hover,
+.resizeHandleHorizontal[data-state="dragging"] {
+  background-color: var(--primary);
+}
+
+.resizeHandleVertical {
+  height: 4px;
+  background-color: var(--border-subtle);
+  cursor: row-resize;
+  transition: background-color 150ms;
+}
+
+.resizeHandleVertical:hover,
+.resizeHandleVertical[data-state="dragging"] {
+  background-color: var(--primary);
 }
 
 /* Helper styles for content inside Status Bar */

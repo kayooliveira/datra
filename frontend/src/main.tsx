@@ -10,6 +10,11 @@ import "./i18n";
 
 const container = document.getElementById("root")!;
 
+// Disable context menu globally
+document.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+});
+
 const root = createRoot(container);
 
 const router = createRouter({ routeTree });

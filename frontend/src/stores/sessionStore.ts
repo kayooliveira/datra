@@ -7,6 +7,11 @@ interface SessionState {
     setIsCreatingConnection: (isCreating: boolean) => void;
     isConnectingSession: boolean;
     setIsConnectingSession: (isConnecting: boolean) => void;
+    activeContext: {
+        database?: string;
+        schema?: string;
+    } | null;
+    setActiveContext: (context: { database?: string; schema?: string } | null) => void;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -16,4 +21,6 @@ export const useSessionStore = create<SessionState>((set) => ({
     setIsCreatingConnection: (isCreating) => set({ isCreatingConnection: isCreating }),
     isConnectingSession: false,
     setIsConnectingSession: (isConnecting) => set({ isConnectingSession: isConnecting }),
+    activeContext: null,
+    setActiveContext: (context) => set({ activeContext: context }),
 }));

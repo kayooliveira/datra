@@ -1,0 +1,110 @@
+.container {
+  padding: 8px 0;
+  user-select: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  transition: all 0.1s ease-in-out;
+  margin-bottom: 1px;
+}
+
+.item:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-bright);
+}
+
+.selected {
+  background-color: var(--bg-active);
+  color: var(--text-bright);
+}
+
+.expandIcon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs);
+  color: var(--text-muted);
+  transition: background-color 0.1s;
+}
+
+.expandIcon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-bright);
+}
+
+.label {
+  flex: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.type {
+  font-size: 11px;
+  opacity: 0.5;
+  margin-left: auto;
+}
+
+/* Indentation levels */
+.level1 { padding-left: 8px; }
+.level2 { padding-left: 20px; }
+.level3 { padding-left: 32px; }
+
+/* Icon Colors */
+.schemaIcon { color: #e5c07b; } /* Yellow-ish */
+.tableIcon { color: #61afef; }  /* Blue-ish */
+.columnIcon { color: #98c379; } /* Green-ish */
+
+/* Loading State */
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.loadingSpinner {
+  animation: spin 1s linear infinite;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.loadingText {
+  opacity: 0.8;
+  font-style: italic;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.4; }
+}
+
+/* Error State */
+.errorContainer {
+  padding: 12px;
+  color: var(--danger, #f44336);
+  font-size: 12px;
+}
+
+.errorText {
+  opacity: 0.9;
+}

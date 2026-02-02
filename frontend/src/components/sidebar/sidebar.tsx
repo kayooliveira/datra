@@ -8,6 +8,7 @@ import styles from "./sidebar.module.css";
 import { useProfiles } from "../../hooks/useConnections";
 import { Connect } from "../../../wailsjs/go/connection/ConnectionService";
 import { useSessionStore } from "../../stores/sessionStore";
+import { useTabStore } from "../../stores/tabStore";
 
 interface SidebarProps {
   className?: string;
@@ -18,18 +19,22 @@ export function Sidebar({ className = "" }: SidebarProps) {
   const { data: connections = [], isLoading } = useProfiles();
   const navigate = useNavigate();
   const { platformModifier } = useSettings();
-  const { setActiveSessionId, setIsConnectingSession } = useSessionStore();
+  const { activeSessionId, setActiveSessionId, setIsConnectingSession } =
+    useSessionStore();
+  const { initializeMainTab } = useTabStore();
 
   const handleSelectConnection = async (id: string) => {
     setIsConnectingSession(true);
     try {
-        const sessionId = await Connect(id);
-        setActiveSessionId(sessionId);
-        navigate({ to: "/" });
+      const sessionId = await Connect(id);
+      setActiveSessionId(sessionId);
+      const connection = connections.find((c) => c.id === id);
+      initializeMainTab(sessionId, connection?.name, id);
+      navigate({ to: "/" });
     } catch (err) {
-        console.error("Failed to connect from sidebar:", err);
+      console.error("Failed to connect from sidebar:", err);
     } finally {
-        setIsConnectingSession(false);
+      setIsConnectingSession(false);
     }
   };
 
@@ -43,7 +48,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
         <h2 className={styles.title}>
           {t("app.connections.title", "Connections")}
         </h2>
-        {!isLoading && connections.length > 0 && (
+        {!isLoading && connections.length > 0 && !activeSessionId && (
           <div className={styles.actions}>
             <button
               onClick={handleCreateConnection}
@@ -57,7 +62,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
       </div>
       <div className={styles.content}>
         {isLoading ? (
-          <div className="p-4 text-xs opacity-50">Loading...</div>
+          <div className="p-4 text-xs opacity-50">{t("app.loading")}</div>
         ) : connections.length === 0 ? (
           <EmptyStateSidebar onCreate={handleCreateConnection} />
         ) : (
