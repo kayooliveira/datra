@@ -1,0 +1,182 @@
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  position: relative;
+  background-color: var(--bg-editor);
+  display: flex;
+  flex-direction: column;
+}
+
+.table {
+  display: grid;
+  flex: 1;
+}
+
+.headerRow {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--bg-panel);
+  border-bottom: 2px solid var(--border-subtle);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.headerCell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-right: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.headerCell:hover {
+  background-color: var(--bg-hover);
+}
+
+.row {
+  display: flex;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background-color 0.1s;
+}
+
+.rowEven {
+  background-color: transparent;
+}
+
+.rowOdd {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.row:hover {
+  background-color: var(--bg-hover);
+}
+
+.rowSelected {
+  background-color: rgba(56, 125, 246, 0.25) !important;
+  border-left: 2px solid #387df6;
+}
+
+.rowSelected .cell {
+  color: #fff;
+}
+
+.cell {
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* Cell value type styling */
+.cellValue {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* NULL values - Grey */
+.typeNull {
+  color: #6b7280;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Numbers - Blue */
+.typeNumber {
+  color: #60a5fa;
+}
+
+/* Booleans - Pink for high visibility */
+.typeBoolean {
+  color: #f472b6;
+  font-weight: 500;
+}
+
+/* Strings - Soft Yellow */
+.typeString {
+  color: #fcd34d;
+}
+
+/* Dates - Emerald Green */
+.typeDate {
+  color: #34d399;
+}
+
+/* JSON - Violet */
+.typeJson {
+  color: #a78bfa;
+  font-size: 11px;
+}
+
+/* Unknown - Muted */
+.typeUnknown {
+  color: var(--text-muted);
+}
+
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: transparent;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+}
+
+.resizer:hover,
+.isResizing {
+  background: var(--primary);
+  opacity: 0.5;
+}
+
+.noData {
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* Footer */
+.footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  background-color: var(--bg-panel);
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11px;
+  color: var(--text-muted);
+  z-index: 10;
+}
+
+.rowCount {
+  font-weight: 500;
+}
+
+.queryTime {
+  color: var(--text-muted);
+  opacity: 0.7;
+}

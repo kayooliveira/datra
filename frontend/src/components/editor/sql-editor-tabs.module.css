@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--bg-panel);
+}
+
+.tabBar {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-panel);
+  /* The border-bottom is handled by the tabs themselves or the container connecting to the editor */
+  /* Using a subtle background difference instead of hard borders */
+  height: 36px;
+}
+
+.tabsScroll {
+  display: flex;
+  overflow-x: auto;
+  flex: 1;
+  height: 100%;
+  scrollbar-width: none;
+}
+
+.tabsScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+}
+
+.addBtn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-bright);
+}

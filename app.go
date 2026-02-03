@@ -21,15 +21,12 @@ type UserPreferences struct {
 
 type App struct {
 	ctx               context.Context
-	connectionService *connection.Service
+	ConnectionService *connection.ConnectionService
 }
 
 func NewApp() *App {
-	home, _ := os.UserHomeDir()
-	configDir := filepath.Join(home, ".datra")
-	storage := connection.NewStorage(configDir)
 	return &App{
-		connectionService: connection.NewService(storage),
+		ConnectionService: connection.NewConnectionService(),
 	}
 }
 
@@ -46,6 +43,13 @@ func (a *App) UpdateMenu(language string) {
 	fileLabel := T(language, "menu.file")
 	settingsLabel := T(language, "menu.settings")
 	quitLabel := T(language, "menu.quit")
+	editLabel := T(language, "menu.edit")
+	undoLabel := T(language, "menu.undo")
+	redoLabel := T(language, "menu.redo")
+	cutLabel := T(language, "menu.cut")
+	copyLabel := T(language, "menu.copy")
+	pasteLabel := T(language, "menu.paste")
+	selectAllLabel := T(language, "menu.select_all")
 
 	AppMenu := menu.NewMenu()
 	FileMenu := AppMenu.AddSubmenu(fileLabel)
@@ -55,6 +59,28 @@ func (a *App) UpdateMenu(language string) {
 	FileMenu.AddSeparator()
 	FileMenu.AddText(quitLabel, keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		runtime.Quit(a.ctx)
+	})
+
+	EditMenu := AppMenu.AddSubmenu(editLabel)
+	EditMenu.AddText(undoLabel, keys.CmdOrCtrl("z"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('undo')")
+	})
+	EditMenu.AddText(redoLabel, keys.CmdOrCtrl("shift+z"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('redo')")
+	})
+	EditMenu.AddSeparator()
+	EditMenu.AddText(cutLabel, keys.CmdOrCtrl("x"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('cut')")
+	})
+	EditMenu.AddText(copyLabel, keys.CmdOrCtrl("c"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('copy')")
+	})
+	EditMenu.AddText(pasteLabel, keys.CmdOrCtrl("v"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('paste')")
+	})
+	EditMenu.AddSeparator()
+	EditMenu.AddText(selectAllLabel, keys.CmdOrCtrl("a"), func(_ *menu.CallbackData) {
+		runtime.WindowExecJS(a.ctx, "document.execCommand('selectAll')")
 	})
 
 	runtime.MenuSetApplicationMenu(a.ctx, AppMenu)
@@ -118,29 +144,27 @@ func (a *App) SaveSettings(settings UserPreferences) error {
 	return os.WriteFile(path, data, 0644)
 }
 
-func (a *App) GetConnections() []connection.Connection {
-	connections, err := a.connectionService.GetConnections()
-	if err != nil {
-		fmt.Printf("Error getting connections: %v\n", err)
-		return []connection.Connection{}
-	}
-	return connections
+// --- Connection Wrappers for Legacy UI Support ---
+
+func (a *App) GetConnections() ([]connection.Connection, error) {
+	return a.ConnectionService.GetProfiles()
 }
 
-func (a *App) CreateConnection(conn connection.Connection, password string, tunnelPassword string) (string, error) {
-	return a.connectionService.CreateConnection(conn, password, tunnelPassword)
+func (a *App) CreateConnection(conn connection.Connection, password string, tunnelPassword string) (connection.Connection, error) {
+	// Tunnel password ignored for now as we haven't re-implemented tunnel yet
+	return a.ConnectionService.SaveProfile(conn, password)
 }
 
-func (a *App) UpdateConnection(conn connection.Connection, password string, tunnelPassword string) error {
-	return a.connectionService.UpdateConnection(conn, password, tunnelPassword)
+func (a *App) UpdateConnection(conn connection.Connection, password string, tunnelPassword string) (connection.Connection, error) {
+	return a.ConnectionService.SaveProfile(conn, password)
 }
 
 func (a *App) DeleteConnection(id string) error {
-	return a.connectionService.DeleteConnection(id)
+	return a.ConnectionService.DeleteProfile(id)
 }
 
-func (a *App) TestConnection(conn connection.Connection, password string, tunnelPassword string) error {
-	return a.connectionService.TestConnection(conn, password, tunnelPassword)
+func (a *App) TestConnection(conn connection.Connection, password string, tunnelPassword string) (string, error) {
+	return a.ConnectionService.TestConnection(conn, password)
 }
 
 func (a *App) Greet(name string) string {

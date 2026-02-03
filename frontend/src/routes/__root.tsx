@@ -1,13 +1,11 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { useSettings } from "../contexts/settings-context";
 import { useTranslation } from "react-i18next";
 import { EventsOn } from "../../wailsjs/runtime/runtime";
 import { useEffect } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Layout, Panel, Group as PanelGroup } from "react-resizable-panels";
+import { Panel, Group, Separator } from "react-resizable-panels";
 import { Sidebar } from "../components/sidebar/sidebar";
-import { ResizableHandle } from "../components/sidebar/resizable-handle";
 import { useHotkeys } from "react-hotkeys-hook";
 import styles from "./root.module.css";
 import { RefreshCw, FilePlus, FolderOpen, Tag } from "lucide-react";
@@ -17,6 +15,10 @@ import {
 } from "../contexts/status-bar-context";
 import { StatusBar } from "../components/status-bar/status-bar";
 import pkg from "../../package.json";
+import { useSessionStore } from "../stores/sessionStore";
+import { Toaster } from "sonner";
+import { SystemStatus } from "../components/status-bar/system-status";
+import { useSyncMainTabContext } from "../hooks/useSyncMainTabContext";
 
 export const Route = createRootRoute({
   component: () => (
@@ -27,10 +29,15 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
-  const { platformModifier } = useSettings();
+  const { platformModifier, settings } = useSettings();
+  const theme = settings.theme;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { addItem, removeItem } = useStatusBar();
+  const { setIsCreatingConnection } = useSessionStore();
+  
+  // Sync main tab context with active session
+  useSyncMainTabContext();
 
   const modifier = platformModifier === "Ctrl" ? "ctrl" : "meta";
 
@@ -38,7 +45,7 @@ function RootLayout() {
     `${modifier}+n`,
     (e) => {
       e.preventDefault();
-      navigate({ to: "/connections/new" });
+      setIsCreatingConnection(true);
     },
     { enableOnFormTags: true },
   );
@@ -60,9 +67,15 @@ function RootLayout() {
     return () => unbind();
   }, [navigate]);
 
-  // Register Global Status Bar Items
   useEffect(() => {
     const handleRefresh = () => window.location.reload();
+
+    addItem({
+      id: "system-status",
+      section: "left",
+      priority: 1000,
+      content: <SystemStatus />,
+    });
 
     addItem({
       id: "refresh-app",
@@ -110,58 +123,31 @@ function RootLayout() {
       priority: 0,
       content: (
         <span className={styles.statusBarText} title={`Version ${pkg.version}`}>
-          <Tag size={10} />
-          v{pkg.version}
+          <Tag size={10} />v{pkg.version}
         </span>
       ),
     });
 
-    // Cleanup not strictly necessary for root items but good practice if component unmounts
-    return () => {
-      // In a real app we might want to keep these persistent, but for now:
-      // removeItem("refresh-app");
-      // ...
-    };
+    return () => {};
   }, [addItem, removeItem, t, platformModifier]);
-
-  const handleLayoutChange = (layout: Layout) => {
-    localStorage.setItem("sidebar-layout-v5", JSON.stringify(layout));
-  };
-
-  const defaultLayout = localStorage.getItem("sidebar-layout-v5")
-    ? JSON.parse(localStorage.getItem("sidebar-layout-v5")!)
-    : { sidebar: 20, "main-content": 80 };
 
   return (
     <div className={styles.container}>
-      <PanelGroup
-        dir="horizontal"
-        onLayoutChanged={handleLayoutChange}
-        style={{ flex: 1 }}
-      >
-        <Panel
-          id="sidebar"
-          defaultSize={defaultLayout["sidebar"]}
-          minSize="30%"
-          maxSize="50%"
-        >
+      <Toaster theme={theme as "light" | "dark" | "system"} richColors />
+      <Group orientation="horizontal" className={styles.panelGroup}>
+        <Panel id="sidebar" defaultSize="20%" minSize="15%" maxSize="35%">
           <Sidebar />
         </Panel>
-        <ResizableHandle />
-        <Panel
-          id="main-content"
-          defaultSize={defaultLayout["main-content"]}
-          minSize="50%"
-        >
+        <Separator className={styles.resizeHandleHorizontal} />
+        <Panel id="main-content" defaultSize="80%" minSize="50%">
           <div className={styles.mainWrapper}>
             <main className={styles.main}>
               <Outlet />
             </main>
           </div>
         </Panel>
-      </PanelGroup>
+      </Group>
       <StatusBar />
-      {/* <TanStackRouterDevtools /> */}
     </div>
   );
 }

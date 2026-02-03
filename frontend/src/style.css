@@ -2,6 +2,7 @@
   /* Core Colors - Native-like Neutral Palette */
   --bg-app: #1e1e1e;       /* VS Code-like background */
   --bg-panel: #252526;     /* Slightly lighter for sidebars */
+  --bg-editor: #1e1e1e;    /* Main editor background */
   --bg-hover: #2a2d2e;     /* List item hover */
   --bg-active: #37373d;    /* List item active/selected */
   --bg-input: #3c3c3c;     /* Input background */
@@ -33,6 +34,7 @@
 [data-theme='light'] {
   --bg-app: #ffffff;
   --bg-panel: #f3f3f3;
+  --bg-editor: #ffffff;
   --bg-hover: #e4e6f1;
   --bg-active: #d6ebff; /* Native mac selection style often blue-ish */
   --bg-input: #ffffff;
@@ -63,6 +65,16 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden; /* App-like behavior */
+  
+  /* Disable text selection by default */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Allow selection in specific interactive/data areas */
+input, textarea, [contenteditable="true"], .selectable, code, pre, table, .sql-editor {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 #app {

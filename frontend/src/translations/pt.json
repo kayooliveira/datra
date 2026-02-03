@@ -10,10 +10,20 @@
       "no_connections": "Nenhuma conexão ainda",
       "create_connection": "Criar",
       "new_connection_tooltip": "Nova Conexão",
-      "new_connection": "Nova Conexão"
+      "new_connection": "Nova Conexão",
+      "connect": "Conectar",
+      "disconnect": "Desconectar",
+      "disconnecting": "Desconectando...",
+      "edit": "Editar",
+      "delete": "Excluir"
     },
     "connections": {
       "title": "Conexões",
+      "connecting": "Estabelecendo Conexão...",
+      "connecting_detail": "Por favor, aguarde enquanto inicializamos a sessão.",
+      "disconnecting": "Desconectando...",
+      "loading_schemas": "Carregando estrutura do banco...",
+      "loading_tables": "Carregando estrutura do banco...",
       "new": {
         "title": "Nova Conexão"
       },
@@ -22,7 +32,13 @@
       },
       "delete": {
         "title": "Excluir Conexão",
-        "confirm": "Tem certeza que deseja excluir esta conexão? Esta ação não pode ser desfeita."
+        "confirm": "Tem certeza que deseja excluir esta conexão? Esta ação não pode ser desfeita.",
+        "loading": "Excluindo conexão...",
+        "error": "Falha ao excluir conexão"
+      },
+      "save": {
+        "loading": "Salvando conexão...",
+        "error": "Falha ao salvar conexão"
       },
       "test": {
         "success": "Conexão bem-sucedida!",
@@ -52,10 +68,72 @@
         "save": "Salvar Conexão"
       }
     },
+    "editor": {
+      "live_session": "Sessão Ativa",
+      "active_connection": "Conexão Ativa",
+      "status": "Status",
+      "connected": "Conectado",
+      "session_started": "Início da Sessão",
+      "run_query": "EXECUTAR QUERY",
+      "run": "Executar",
+      "stop_query": "Parar Execução",
+      "stop": "Parar",
+      "clear": "Limpar Query",
+      "export": "Exportar Resultados",
+      "limit": "Limite",
+      "unlimited": "Ilimitado",
+      "results": "Resultados",
+      "executing": "Executando...",
+      "error": "Erro de Execução",
+      "empty_results": "Execute uma query para ver os resultados aqui",
+      "unlimited_warning": "Aviso: Buscar resultados ilimitados pode afetar o desempenho."
+    },
+    "history": {
+      "empty": "Sem histórico de queries para esta sessão.",
+      "status": "St",
+      "time": "Hora",
+      "duration": "Dur",
+      "query": "Query",
+      "click_to_load": "Clique para carregar a query"
+    },
+    "overview": {
+      "new_query": "Nova Query",
+      "connection_info": "Info da Conexão",
+      "host": "Host",
+      "port": "Porta",
+      "database": "Banco de Dados",
+      "username": "Usuário",
+      "session_info": "Info da Sessão",
+      "status": "Status",
+      "connected_at": "Conectado em",
+      "session_id": "ID da Sessão",
+      "security": "Segurança",
+      "ssl_mode": "Modo SSL",
+      "tunnel": "Túnel SSH",
+      "enabled": "Ativado",
+      "disabled": "Desativado",
+      "tips_title": "Dicas Rápidas",
+      "tip_1": "Pressione Cmd/Ctrl + T para abrir uma nova aba de query",
+      "tip_2": "Pressione Shift + Enter para executar a query atual",
+      "tip_3": "Dê um duplo clique em uma aba para renomeá-la"
+    },
+    "dashboard": {
+      "welcome": "Bem-vindo ao Datra",
+      "select_hint": "Selecione uma conexão de banco de dados para começar a trabalhar."
+    },
     "common": {
       "cancel": "Cancelar",
       "delete": "Excluir",
-      "save": "Salvar"
+      "save": "Salvar",
+      "error": "Erro",
+      "close": "Fechar",
+      "loading_schemas": "Carregando estrutura do banco...",
+      "error_loading_schemas": "Falha ao carregar schemas",
+      "loading_columns": "Carregando colunas...",
+      "loading_tables": "Carregando tabelas..."
+    },
+    "status": {
+      "click_for_details": "Clique para ver detalhes"
     },
     "footer": {
       "refresh": "Atualizar",
@@ -80,6 +158,13 @@
   "menu": {
     "file": "Arquivo",
     "settings": "Configurações",
-    "quit": "Sair"
+    "quit": "Sair",
+    "edit": "Editar",
+    "undo": "Desfazer",
+    "redo": "Refazer",
+    "cut": "Recortar",
+    "copy": "Copiar",
+    "paste": "Colar",
+    "select_all": "Selecionar Tudo"
   }
 }

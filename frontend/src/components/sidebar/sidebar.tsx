@@ -1,13 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { GetConnections } from "../../../wailsjs/go/main/App";
 import { ConnectionItem } from "./connection-item";
 import { useNavigate } from "@tanstack/react-router";
 import { EmptyStateSidebar } from "./empty-state-sidebar";
 import { Plus } from "lucide-react";
 import { useSettings } from "../../contexts/settings-context";
-import { connection } from "../../../wailsjs/go/models";
 import styles from "./sidebar.module.css";
+import { useProfiles } from "../../hooks/useConnections";
+import { Connect } from "../../../wailsjs/go/connection/ConnectionService";
+import { useSessionStore } from "../../stores/sessionStore";
+import { useTabStore, MAIN_TAB_ID } from "../../stores/tabStore";
 
 interface SidebarProps {
   className?: string;
@@ -15,25 +16,32 @@ interface SidebarProps {
 
 export function Sidebar({ className = "" }: SidebarProps) {
   const { t } = useTranslation();
-  const [connections, setConnections] = useState<connection.Connection[]>([]);
+  const { data: connections = [], isLoading } = useProfiles();
   const navigate = useNavigate();
   const { platformModifier } = useSettings();
+  const { activeSessionId, setActiveSessionId, setIsConnectingSession } =
+    useSessionStore();
+  const { initializeMainTab, tabs } = useTabStore();
 
-  useEffect(() => {
-    fetchConnections();
-  }, []);
-
-  const fetchConnections = async () => {
+  const handleSelectConnection = async (id: string) => {
+    setIsConnectingSession(true);
     try {
-      const result = await GetConnections();
-      setConnections(result || []);
-    } catch (error) {
-      console.error("Failed to fetch connections:", error);
+      const sessionId = await Connect(id);
+      setActiveSessionId(sessionId);
+      
+      const connection = connections.find((c) => c.id === id);
+      const mainTab = tabs.find((t) => t.id === MAIN_TAB_ID);
+      
+      if (!mainTab) {
+        initializeMainTab(sessionId, connection?.name, id);
+      }
+      
+      navigate({ to: "/" });
+    } catch (err) {
+      console.error("Failed to connect from sidebar:", err);
+    } finally {
+      setIsConnectingSession(false);
     }
-  };
-
-  const handleSelectConnection = (id: string) => {
-    navigate({ to: "/" });
   };
 
   const handleCreateConnection = () => {
@@ -46,7 +54,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
         <h2 className={styles.title}>
           {t("app.connections.title", "Connections")}
         </h2>
-        {connections.length > 0 && (
+        {!isLoading && connections.length > 0 && !activeSessionId && (
           <div className={styles.actions}>
             <button
               onClick={handleCreateConnection}
@@ -59,7 +67,9 @@ export function Sidebar({ className = "" }: SidebarProps) {
         )}
       </div>
       <div className={styles.content}>
-        {connections.length === 0 ? (
+        {isLoading ? (
+          <div className="p-4 text-xs opacity-50">{t("app.loading")}</div>
+        ) : connections.length === 0 ? (
           <EmptyStateSidebar onCreate={handleCreateConnection} />
         ) : (
           <ul className={styles.list}>

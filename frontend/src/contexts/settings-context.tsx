@@ -43,7 +43,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   });
   const [loading, setLoading] = useState(true);
   const [platform, setPlatform] = useState("windows");
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   useEffect(() => {
     const init = async () => {
@@ -101,7 +101,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({
   );
 
   if (loading) {
-    return <div className="loading">Loading settings...</div>;
+    return <div className="loading">{t("app.loading")}</div>;
   }
 
   return (

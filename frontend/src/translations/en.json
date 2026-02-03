@@ -10,10 +10,20 @@
       "no_connections": "No connections yet",
       "create_connection": "Create",
       "new_connection_tooltip": "New Connection",
-      "new_connection": "New Connection"
+      "new_connection": "New Connection",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "disconnecting": "Disconnecting...",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "connections": {
       "title": "Connections",
+      "connecting": "Establishing Connection...",
+      "connecting_detail": "Please wait while we initialize the session.",
+      "disconnecting": "Disconnecting...",
+      "loading_schemas": "Loading database structure...",
+      "loading_tables": "Loading database structure...",
       "new": {
         "title": "New Connection"
       },
@@ -22,7 +32,13 @@
       },
       "delete": {
         "title": "Delete Connection",
-        "confirm": "Are you sure you want to delete this connection? This action cannot be undone."
+        "confirm": "Are you sure you want to delete this connection? This action cannot be undone.",
+        "loading": "Deleting connection...",
+        "error": "Failed to delete connection"
+      },
+      "save": {
+        "loading": "Saving connection...",
+        "error": "Failed to save connection"
       },
       "test": {
         "success": "Connection successful!",
@@ -52,10 +68,72 @@
         "save": "Save Connection"
       }
     },
+    "editor": {
+      "live_session": "Live Session",
+      "active_connection": "Active Connection",
+      "status": "Status",
+      "connected": "Connected",
+      "session_started": "Session Started",
+      "run_query": "RUN QUERY",
+      "run": "Run",
+      "stop_query": "Stop Execution",
+      "stop": "Stop",
+      "clear": "Clear Query",
+      "export": "Export Results",
+      "limit": "Limit",
+      "unlimited": "Unlimited",
+      "results": "Results",
+      "executing": "Executing...",
+      "error": "Execution Error",
+      "empty_results": "Run a query to see results here",
+      "unlimited_warning": "Warning: Fetching unlimited results may affect performance."
+    },
+    "history": {
+      "empty": "No query history for this session.",
+      "status": "St",
+      "time": "Time",
+      "duration": "Dur",
+      "query": "Query",
+      "click_to_load": "Click to load query"
+    },
+    "overview": {
+      "new_query": "New Query",
+      "connection_info": "Connection Info",
+      "host": "Host",
+      "port": "Port",
+      "database": "Database",
+      "username": "Username",
+      "session_info": "Session Info",
+      "status": "Status",
+      "connected_at": "Connected At",
+      "session_id": "Session ID",
+      "security": "Security",
+      "ssl_mode": "SSL Mode",
+      "tunnel": "SSH Tunnel",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "tips_title": "Quick Tips",
+      "tip_1": "Press Cmd/Ctrl + T to open a new query tab",
+      "tip_2": "Press Shift + Enter to execute the current query",
+      "tip_3": "Double-click a tab to rename it"
+    },
+    "dashboard": {
+      "welcome": "Welcome to Datra",
+      "select_hint": "Select a database connection to start working."
+    },
     "common": {
       "cancel": "Cancel",
       "delete": "Delete",
-      "save": "Save"
+      "save": "Save",
+      "error": "Error",
+      "close": "Close",
+      "loading_schemas": "Loading database structure...",
+      "error_loading_schemas": "Failed to load schemas",
+      "loading_columns": "Loading columns...",
+      "loading_tables": "Loading tables..."
+    },
+    "status": {
+      "click_for_details": "Click for details"
     },
     "footer": {
       "refresh": "Refresh",
@@ -80,6 +158,13 @@
   "menu": {
     "file": "File",
     "settings": "Settings",
-    "quit": "Quit"
+    "quit": "Quit",
+    "edit": "Edit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "select_all": "Select All"
   }
 }

@@ -1,143 +1,175 @@
 package connection
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
-	"time"
-
-	"github.com/google/uuid"
 )
 
-type Service struct {
-	storage *Storage
+// ConnectionService handles connection profiles, sessions, and metadata.
+type ConnectionService struct {
+	ctx            context.Context
+	manager        *ConnectionManager
+	sessionManager *SessionManager
 }
 
-func NewService(storage *Storage) *Service {
-	return &Service{storage: storage}
-}
-
-func (s *Service) GetConnections() ([]Connection, error) {
-	return s.storage.LoadConnections()
-}
-
-func (s *Service) CreateConnection(conn Connection, password string, tunnelPassword string) (string, error) {
-	if conn.ID == "" {
-		conn.ID = uuid.New().String()
+// NewConnectionService creates a new instance of ConnectionService.
+func NewConnectionService() *ConnectionService {
+	return &ConnectionService{
+		manager:        NewConnectionManager(),
+		sessionManager: NewSessionManager(),
 	}
-	conn.CreatedAt = time.Now()
-	conn.UpdatedAt = time.Now()
+}
 
-	connections, err := s.storage.LoadConnections()
+// Startup is called when the app starts.
+func (s *ConnectionService) Startup(ctx context.Context) {
+	s.ctx = ctx
+}
+
+// --- Profile Methods ---
+
+func (s *ConnectionService) GetProfiles() ([]Connection, error) {
+	return s.manager.GetProfiles()
+}
+
+func (s *ConnectionService) SaveProfile(profile Connection, password string) (Connection, error) {
+	return s.manager.SaveProfile(profile, password)
+}
+
+func (s *ConnectionService) DeleteProfile(id string) error {
+	return s.manager.DeleteProfile(id)
+}
+
+func (s *ConnectionService) TestConnection(profile Connection, password string) (string, error) {
+	return s.manager.TestConnection(profile, password)
+}
+
+// --- Session Methods ---
+
+func (s *ConnectionService) Connect(profileID string) (string, error) {
+	// 1. Get Profile
+	profiles, err := s.manager.GetProfiles()
 	if err != nil {
 		return "", err
 	}
-
-	connections = append(connections, conn)
-	if err := s.storage.SaveConnections(connections); err != nil {
-		return "", err
-	}
-
-	if err := s.storage.SaveSecret(conn.ID, password); err != nil {
-		return "", fmt.Errorf("failed to save password: %w", err)
-	}
-
-	if conn.Tunnel.Enabled && tunnelPassword != "" {
-		if err := s.storage.SaveTunnelSecret(conn.ID, tunnelPassword); err != nil {
-			return "", fmt.Errorf("failed to save tunnel secret: %w", err)
+	var profile *Connection
+	for _, p := range profiles {
+		if p.ID == profileID {
+			profile = &p
+			break
 		}
 	}
-
-	return conn.ID, nil
-}
-
-func (s *Service) UpdateConnection(conn Connection, password string, tunnelPassword string) error {
-	connections, err := s.storage.LoadConnections()
-	if err != nil {
-		return err
+	if profile == nil {
+		return "", fmt.Errorf("profile not found: %s", profileID)
 	}
 
-	found := false
-	for i, c := range connections {
-		if c.ID == conn.ID {
-			conn.UpdatedAt = time.Now()
-			conn.CreatedAt = c.CreatedAt // Preserve original creation time
-			connections[i] = conn
-			found = true
+	// 2. Get Password
+	password, err := s.manager.GetPassword(profileID)
+	if err != nil {
+		// Try empty password? Or fail?
+		password = "" 
+	}
+
+	// 3. Connect
+	return s.sessionManager.Connect(*profile, password)
+}
+
+func (s *ConnectionService) Disconnect(sessionID string) error {
+	return s.sessionManager.Disconnect(sessionID)
+}
+
+func (s *ConnectionService) GetActiveSessions() ([]SessionSummary, error) {
+	// Wails needs error return for most bindings usually, or not
+	return s.sessionManager.GetActiveSessions(), nil
+}
+
+func (s *ConnectionService) ExecuteQuery(sessionID string, query string, limit int) (QueryResult, error) {
+	return s.sessionManager.ExecuteQuery(sessionID, query, limit)
+}
+
+func (s *ConnectionService) CancelQuery(sessionID string) error {
+	return s.sessionManager.CancelQuery(sessionID)
+}
+
+// --- Metadata Methods ---
+
+func (s *ConnectionService) GetSchemas(sessionID string) ([]string, error) {
+	session, err := s.sessionManager.GetSession(sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	profiles, err := s.manager.GetProfiles()
+	if err != nil {
+		return nil, err
+	}
+	var driver string
+	for _, p := range profiles {
+		if p.ID == session.ProfileID {
+			driver = p.Driver
+			break
+		}
+	}
+	if driver == "" {
+		return nil, fmt.Errorf("profile not found for session")
+	}
+
+	provider, err := GetMetadataProvider(driver)
+	if err != nil {
+		return nil, err
+	}
+
+	return provider.GetSchemas(session.DB)
+}
+
+func (s *ConnectionService) GetTables(sessionID string, schema string) ([]DatabaseTable, error) {
+	session, err := s.sessionManager.GetSession(sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	profiles, err := s.manager.GetProfiles()
+	if err != nil {
+		return nil, err
+	}
+	var driver string
+	for _, p := range profiles {
+		if p.ID == session.ProfileID {
+			driver = p.Driver
 			break
 		}
 	}
 
-	if !found {
-		return fmt.Errorf("connection not found")
-	}
-
-	if err := s.storage.SaveConnections(connections); err != nil {
-		return err
-	}
-
-	if password != "" {
-		if err := s.storage.SaveSecret(conn.ID, password); err != nil {
-			return fmt.Errorf("failed to update password: %w", err)
-		}
-	}
-
-	if conn.Tunnel.Enabled && tunnelPassword != "" {
-		if err := s.storage.SaveTunnelSecret(conn.ID, tunnelPassword); err != nil {
-			return fmt.Errorf("failed to update tunnel secret: %w", err)
-		}
-	}
-
-	return nil
-}
-
-func (s *Service) DeleteConnection(id string) error {
-	connections, err := s.storage.LoadConnections()
+	provider, err := GetMetadataProvider(driver)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	newConnections := []Connection{}
-	found := false
-	for _, c := range connections {
-		if c.ID == id {
-			found = true
-			continue
-		}
-		newConnections = append(newConnections, c)
-	}
-
-	if !found {
-		return fmt.Errorf("connection not found")
-	}
-
-	if err := s.storage.SaveConnections(newConnections); err != nil {
-		return err
-	}
-
-	_ = s.storage.DeleteSecret(id)
-	_ = s.storage.DeleteTunnelSecret(id)
-
-	return nil
+	return provider.GetTables(session.DB, schema)
 }
 
-func (s *Service) TestConnection(conn Connection, password string, tunnelPassword string) error {
-	// TODO: Implement actual database connection test using driver-specific logic
-	// For now, we simulate a check or do a basic net.Dial if not using tunnel
-	// If tunnel is enabled, we would need to start the tunnel first
-	
-	// Basic validation for now
-	if conn.Host == "" || conn.Port == 0 {
-		return fmt.Errorf("host and port are required")
-	}
-
-	return nil
-}
-
-func testDatabase(driver, dsn string) error {
-	db, err := sql.Open(driver, dsn)
+func (s *ConnectionService) GetColumns(sessionID string, schema string, table string) ([]TableColumn, error) {
+	session, err := s.sessionManager.GetSession(sessionID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer db.Close()
-	return db.Ping()
+
+	profiles, err := s.manager.GetProfiles()
+	if err != nil {
+		return nil, err
+	}
+	var driver string
+	for _, p := range profiles {
+		if p.ID == session.ProfileID {
+			driver = p.Driver
+			break
+		}
+	}
+
+	provider, err := GetMetadataProvider(driver)
+	if err != nil {
+		return nil, err
+	}
+
+	return provider.GetColumns(session.DB, schema, table)
 }
+

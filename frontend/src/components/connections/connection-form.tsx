@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { connection } from "../../../wailsjs/go/models";
 import { useTranslation } from "react-i18next";
-import { Shield, Globe, Database, Loader2, Key, User, Server } from "lucide-react";
+import { Shield, Database, Loader2, CheckCircle, XCircle } from "lucide-react";
 import styles from "./connection-form.module.css";
 
 interface ConnectionFormProps {
@@ -13,7 +13,7 @@ interface ConnectionFormProps {
 
 export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: ConnectionFormProps) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState<connection.Connection>(initialData || {
+  const [formData, setFormData] = useState<connection.Connection>(initialData || new connection.Connection({
     id: "",
     name: "",
     driver: "mysql",
@@ -22,16 +22,16 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
     username: "root",
     database: "",
     ssl_mode: "disable",
-    tunnel: {
+    tunnel: new connection.Tunnel({
       enabled: false,
       host: "",
       port: 22,
       username: "",
-      auth_method: "password" as any,
-    },
-    created_at: new Date(),
-    updated_at: new Date(),
-  });
+      auth_method: "password",
+    }),
+    created_at: "",
+    updated_at: "",
+  }));
 
   const [password, setPassword] = useState("");
   const [tunnelPassword, setTunnelPassword] = useState("");
@@ -39,25 +39,26 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    // Create a mutable copy to avoid directly modifying formData
+    const updatedFormData = { ...formData }; 
+
     if (name.startsWith("tunnel.")) {
       const field = name.split(".")[1];
-      setFormData(prev => ({
-        ...prev,
-        tunnel: { ...prev.tunnel, [field]: field === "port" ? parseInt(value) : value }
-      }));
+      // Ensure tunnel is a mutable object if it's a class instance
+      updatedFormData.tunnel = { ...updatedFormData.tunnel, [field]: field === "port" ? parseInt(value) : value };
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: name === "port" ? parseInt(value) : value
-      }));
+      (updatedFormData as any)[name] = name === "port" ? parseInt(value) : value;
     }
+    // Set state with a new Connection instance to ensure convertValues is present
+    setFormData(new connection.Connection(updatedFormData));
   };
 
   const handleTunnelToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      tunnel: { ...prev.tunnel, enabled: e.target.checked }
-    }));
+    // Create a mutable copy to avoid directly modifying formData
+    const updatedFormData = { ...formData };
+    updatedFormData.tunnel = { ...updatedFormData.tunnel, enabled: e.target.checked };
+    // Set state with a new Connection instance
+    setFormData(new connection.Connection(updatedFormData));
   };
 
   const handleTest = async (e: React.MouseEvent) => {
@@ -88,7 +89,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
         <div className={styles.grid}>
              <div className={`${styles.group} ${styles.fullWidth}`}>
                 <label className={styles.label}>{t("app.connections.form.name", "Connection Name")}</label>
-                <input className={styles.input} name="name" value={formData.name} onChange={handleChange} required placeholder="My Production DB" autoFocus />
+                <input className={styles.input} name="name" value={formData.name} onChange={handleChange} required placeholder="My Production DB" autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
 
             <div className={styles.group}>
@@ -102,13 +103,13 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
             </div>
              <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.database", "Database Name")}</label>
-                <input className={styles.input} name="database" value={formData.database} onChange={handleChange} placeholder="optional" />
+                <input className={styles.input} name="database" value={formData.database} onChange={handleChange} placeholder="optional" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
 
             <div className={`${styles.group} ${styles.fullWidth}`} style={{ gridTemplateColumns: "2fr 1fr", display: "grid", gap: "16px" }}>
                 <div className={styles.group}>
                     <label className={styles.label}>{t("app.connections.form.host", "Host")}</label>
-                    <input className={styles.input} name="host" value={formData.host} onChange={handleChange} required placeholder="127.0.0.1" />
+                    <input className={styles.input} name="host" value={formData.host} onChange={handleChange} required placeholder="127.0.0.1" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                 </div>
                 <div className={styles.group}>
                     <label className={styles.label}>{t("app.connections.form.port", "Port")}</label>
@@ -118,11 +119,11 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
 
              <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.username", "Username")}</label>
-                <input className={styles.input} name="username" value={formData.username} onChange={handleChange} required />
+                <input className={styles.input} name="username" value={formData.username} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
             <div className={styles.group}>
                 <label className={styles.label}>{t("app.connections.form.password", "Password")}</label>
-                <input className={styles.input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+                <input className={styles.input} type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
             </div>
         </div>
       </section>
@@ -159,7 +160,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
                              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px'}}>
                                 <div className={styles.group}>
                                     <label className={styles.label}>{t("app.connections.form.ssh_host", "SSH Host")}</label>
-                                    <input className={styles.input} name="tunnel.host" value={formData.tunnel.host} onChange={handleChange} required />
+                                    <input className={styles.input} name="tunnel.host" value={formData.tunnel.host} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                                 </div>
                                 <div className={styles.group}>
                                     <label className={styles.label}>{t("app.connections.form.ssh_port", "SSH Port")}</label>
@@ -170,7 +171,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
 
                          <div className={styles.group}>
                             <label className={styles.label}>{t("app.connections.form.ssh_user", "SSH User")}</label>
-                            <input className={styles.input} name="tunnel.username" value={formData.tunnel.username} onChange={handleChange} required />
+                            <input className={styles.input} name="tunnel.username" value={formData.tunnel.username} onChange={handleChange} required autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                         </div>
                         <div className={styles.group}>
                              <label className={styles.label}>{t("app.connections.form.ssh_auth", "Auth Method")}</label>
@@ -181,7 +182,7 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
                         </div>
                         <div className={`${styles.group} ${styles.fullWidth}`}>
                             <label className={styles.label}>{t("app.connections.form.ssh_password", "SSH Password / Key Passphrase")}</label>
-                            <input className={styles.input} type="password" value={tunnelPassword} onChange={(e) => setTunnelPassword(e.target.value)} />
+                            <input className={styles.input} type="password" value={tunnelPassword} onChange={(e) => setTunnelPassword(e.target.value)} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} />
                         </div>
                     </div>
                 </div>
@@ -191,11 +192,11 @@ export function ConnectionForm({ initialData, onSubmit, onTest, isSubmitting }: 
 
       <div className={styles.actions}>
         <button type="button" className={styles.btnSecondary} onClick={handleTest} disabled={isTesting || isSubmitting}>
-          {isTesting ? <Loader2 size={14} className="animate-spin" /> : null}
+          {isTesting ? <Loader2 size={14} className={styles.rotating} /> : null}
           {t("app.connections.form.test", "Test Connection")}
         </button>
         <button type="submit" className={styles.btnPrimary} disabled={isTesting || isSubmitting}>
-          {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : null}
+          {isSubmitting ? <Loader2 size={14} className={styles.rotating} /> : null}
           {t("app.connections.form.save", "Save Connection")}
         </button>
       </div>
