@@ -67,6 +67,12 @@ export const Tab: React.FC<TabProps> = ({
       setIsEditing(false);
     }
   };
+  
+  const handleAuxClick = (e: React.MouseEvent) => {
+    if (e.button === 1 && canClose) { // Middle click (Mouse3)
+      onClose(e);
+    }
+  };
 
   // Close menu on click outside
   useEffect(() => {
@@ -89,6 +95,7 @@ export const Tab: React.FC<TabProps> = ({
         onClick={onSelect}
         onContextMenu={handleContextMenu}
         onDoubleClick={handleDoubleClick}
+        onAuxClick={handleAuxClick}
         title={tooltipText}
       >
         <IconComponent size={12} className={styles.icon} />

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import {
   ExecuteQuery,
   GetActiveSessions,
+  CancelQuery,
 } from "../../../wailsjs/go/connection/ConnectionService";
 import { connection } from "../../../wailsjs/go/models";
 import { useTranslation } from "react-i18next";
@@ -62,7 +63,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
     addTab,
     setActiveResultTab,
   } = useTabStore();
-  const { activeContext } = useSessionStore();
+  const { sessionContexts } = useSessionStore();
   const { addEntry } = useHistoryStore();
   const { platformModifier } = useSettings();
   const [sessionInfo, setSessionInfo] =
@@ -77,6 +78,9 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
 
   // Use sessionId from active tab, not from prop
   const currentSessionId = activeTab?.context.connectionId || sessionId;
+  
+  // Get context for the specific session of this tab
+  const activeContext = currentSessionId ? sessionContexts[currentSessionId] : null;
 
   const { data: schemaData } = useSchemaAutocompletion(
     currentSessionId,
@@ -163,7 +167,7 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
       );
 
       try {
-        const res = await ExecuteQuery(tabSessionId, finalQuery);
+        const res = await ExecuteQuery(tabSessionId, finalQuery, activeTab?.limit ?? 50);
         const duration = Date.now() - startTime;
 
         results.push({
@@ -217,6 +221,24 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
     }
   };
 
+  const handleStop = async () => {
+    if (!activeTabId || !activeTab?.isExecuting) return;
+    
+    // Use sessionId from the tab's context
+    const tabSessionId = activeTab.context.connectionId;
+    if (!tabSessionId) return;
+
+    try {
+      await CancelQuery(tabSessionId);
+      // We don't manually set isExecuting false here; 
+      // ExecuteQuery will return with "Query canceled" error or similar,
+      // and handleRun's try/catch/finally (or normal flow) will handle it.
+      // But handleRun sets isExecuting false at the end.
+    } catch (err) {
+      console.error("Failed to cancel query:", err);
+    }
+  };
+
   useHotkeys(
     "shift+enter",
     (e) => {
@@ -232,16 +254,29 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
 
   useHotkeys(
     [`${modifier}+n`, `${modifier}+t`],
-    (e) => {
+    async (e) => {
       e.preventDefault();
-      if (currentSessionId) {
-        const connName = connectionProfile?.name;
-        const profId = sessionInfo?.profile_id;
-        addTab(currentSessionId, connName, profId);
+      // Need activeSessionId from store for global new tab shortcut
+      const globalActiveSessionId = useSessionStore.getState().activeSessionId;
+      
+      if (globalActiveSessionId) {
+        try {
+          const sessions = await GetActiveSessions();
+          const session = sessions.find((s) => s.id === globalActiveSessionId);
+          if (session && profiles) {
+            const profile = profiles.find((p) => p.id === session.profile_id);
+            addTab(globalActiveSessionId, profile?.name, session.profile_id);
+          } else {
+            addTab(globalActiveSessionId);
+          }
+        } catch (err) {
+          console.error("Failed to create new tab:", err);
+          addTab(globalActiveSessionId);
+        }
       }
     },
-    { enableOnFormTags: true, enabled: !!currentSessionId },
-    [currentSessionId, addTab, connectionProfile, sessionInfo],
+    { enableOnFormTags: true },
+    [addTab, profiles],
   );
 
   if (!activeTab) return <SqlEditorTabs />;
@@ -285,12 +320,14 @@ export const SqlEditor: React.FC<SqlEditorProps> = ({ sessionId }) => {
       <SqlEditorTabs />
       <SqlToolbar
         onRun={handleRun}
+        onStop={handleStop}
         isExecuting={!!activeTab?.isExecuting}
         isDisabled={!hasContent}
         limit={activeTab?.limit ?? 50}
         onLimitChange={handleLimitChange}
         hasResults={!!activeTab?.results}
         onClear={handleClear}
+        schema={activeContext?.schema}
       />
 
       <Group orientation="vertical" className={styles.panelGroup}>

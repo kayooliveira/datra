@@ -12,7 +12,9 @@ export const EditorStatusBar: React.FC<EditorStatusBarProps> = ({
   sessionInfo,
 }) => {
   const { addItem, removeItem } = useStatusBar();
-  const { activeContext } = useSessionStore();
+  const { sessionContexts } = useSessionStore();
+  
+  const activeContext = sessionInfo?.id ? sessionContexts[sessionInfo.id] : null;
 
   useEffect(() => {
     const parts = [];

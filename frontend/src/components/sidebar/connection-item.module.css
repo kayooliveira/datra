@@ -239,3 +239,18 @@
 .menuDanger:hover {
   background-color: var(--danger) !important;
 }
+
+/* Active Connection Indicator */
+.container.active {
+  background-color: var(--primary-dim);
+  border-left: 3px solid var(--primary);
+}
+
+.container.active .name {
+  color: var(--primary-fg);
+  font-weight: 600;
+}
+
+.container.active .statusDot {
+  box-shadow: 0 0 8px var(--primary);
+}

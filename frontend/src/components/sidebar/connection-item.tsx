@@ -22,7 +22,7 @@ import { useSessionStore } from "../../stores/sessionStore";
 import { MetadataTree } from "../connections/MetadataTree";
 import { useTranslation } from "react-i18next";
 import { useNotificationStore } from "../../stores/notificationStore";
-import { useTabStore } from "../../stores/tabStore";
+import { useTabStore, MAIN_TAB_ID } from "../../stores/tabStore";
 
 interface ConnectionItemProps {
   connection: connection.Connection;
@@ -37,6 +37,8 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  // Add loading state for metadata
+  const [isMetadataLoading, setIsMetadataLoading] = useState(false);
 
   const { data: sessions } = useActiveSessions();
   const connectMutation = useConnect();
@@ -44,21 +46,13 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   const deleteMutation = useDeleteProfile();
   const { setActiveSessionId, activeSessionId, setIsConnectingSession } =
     useSessionStore();
-  const { initializeMainTab, clearTabs } = useTabStore();
+  const { initializeMainTab, clearTabs, tabs, closeTabsByProfile } = useTabStore();
 
   const { setError } = useNotificationStore();
 
   const session = sessions?.find((s) => s.profile_id === connection.id);
   const isConnected = !!session;
-
-  useEffect(() => {
-    if (isConnected) {
-      setIsExpanded(true);
-    } else {
-      // Reset disconnecting state when actually disconnected
-      setIsDisconnecting(false);
-    }
-  }, [isConnected]);
+  const isActive = session?.id === activeSessionId;
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -80,8 +74,15 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
     try {
       const sessionId = await connectMutation.mutateAsync(connection.id);
       setActiveSessionId(sessionId);
-      initializeMainTab(sessionId, connection.name, connection.id);
+      
+      const mainTab = tabs.find(t => t.id === MAIN_TAB_ID);
+      if (!mainTab) {
+        initializeMainTab(sessionId, connection.name, connection.id);
+      }
+      
+      // Ensure MetadataTree mounts immediately to show loading state
       setIsExpanded(true);
+      
     } catch (err: any) {
       setError(t("app.connections.test.error"), err.message || String(err));
     } finally {
@@ -93,7 +94,7 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   const handleDisconnect = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
     e?.preventDefault();
-    
+
     if (!session || isDisconnecting) return; // Prevent double clicks
 
     // Close menu immediately and set states
@@ -117,8 +118,7 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
       // Re-expand on error
       setIsExpanded(true);
     } finally {
-      // Don't set to false here - let useEffect handle it when isConnected changes
-      // This prevents the flickering where it shows as disconnected before it actually is
+      setIsDisconnecting(false);
     }
   };
 
@@ -130,9 +130,30 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
 
   const handleDelete = async (e?: React.MouseEvent) => {
     e?.stopPropagation();
+    e?.preventDefault();
     setShowMenu(false);
-    if (confirm(`Delete connection "${connection.name}"?`)) {
-      await deleteMutation.mutateAsync(connection.id);
+    
+    if (window.confirm(`Delete connection "${connection.name}"?`)) {
+      try {
+        // 1. If connected, disconnect first
+        if (isConnected && session) {
+           await disconnectMutation.mutateAsync(session.id);
+           
+           // If it was the active session, clear global state
+           if (activeSessionId === session.id) {
+             setActiveSessionId(null);
+           }
+        }
+
+        // 2. Close all tabs associated with this connection profile
+        closeTabsByProfile(connection.id);
+
+        // 3. Delete the profile
+        await deleteMutation.mutateAsync(connection.id);
+      } catch (err: any) {
+        console.error("Delete failed:", err);
+        setError("Delete failed", err.message || String(err));
+      }
     }
   };
 
@@ -148,7 +169,7 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
   return (
     <div className={styles.wrapper} onContextMenu={handleContextMenu}>
       <div
-        className={`${styles.container} ${isConnected ? styles.connected : ""}`}
+        className={`${styles.container} ${isConnected ? styles.connected : ""} ${isActive ? styles.active : ""}`}
       >
         <button onClick={toggleExpand} className={styles.expandBtn}>
           {isConnected ? (
@@ -172,7 +193,7 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
               isConnected ? styles.online : ""
             } ${isConnecting ? styles.connecting : ""} ${isDisconnecting ? styles.disconnecting : ""}`}
           />
-          {isConnecting || isDisconnecting ? (
+          {isConnecting || isDisconnecting || (isExpanded && isMetadataLoading) ? (
             <Loader2 size={14} className={styles.spinner} />
           ) : (
             <Database size={14} className={styles.icon} />
@@ -182,7 +203,9 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
               ? t("app.connections.connecting", "Connecting...")
               : isDisconnecting
                 ? t("app.connections.disconnecting", "Disconnecting...")
-                : connection.name}
+                : (isExpanded && isMetadataLoading)
+                  ? t("app.connections.loading_schemas", "Loading schemas...")
+                  : connection.name}
           </span>
         </button>
         <div className={styles.actions}>
@@ -198,7 +221,11 @@ export function ConnectionItem({ connection, onSelect }: ConnectionItemProps) {
 
       {isConnected && isExpanded && (
         <div className={styles.metadataContainer}>
-          <MetadataTree sessionId={session.id} />
+          <MetadataTree 
+            sessionId={session.id} 
+            onLoadStart={() => setIsMetadataLoading(true)}
+            onLoadEnd={() => setIsMetadataLoading(false)}
+          />
         </div>
       )}
 

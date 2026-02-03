@@ -22,6 +22,7 @@
       "connecting": "Estabelecendo Conexão...",
       "connecting_detail": "Por favor, aguarde enquanto inicializamos a sessão.",
       "disconnecting": "Desconectando...",
+      "loading_schemas": "Carregando estrutura do banco...",
       "loading_tables": "Carregando estrutura do banco...",
       "new": {
         "title": "Nova Conexão"
@@ -75,6 +76,8 @@
       "session_started": "Início da Sessão",
       "run_query": "EXECUTAR QUERY",
       "run": "Executar",
+      "stop_query": "Parar Execução",
+      "stop": "Parar",
       "clear": "Limpar Query",
       "export": "Exportar Resultados",
       "limit": "Limite",

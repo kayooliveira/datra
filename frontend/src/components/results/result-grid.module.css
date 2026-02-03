@@ -64,7 +64,12 @@
 }
 
 .rowSelected {
-  background-color: var(--primary-transparent) !important;
+  background-color: rgba(56, 125, 246, 0.25) !important;
+  border-left: 2px solid #387df6;
+}
+
+.rowSelected .cell {
+  color: #fff;
 }
 
 .cell {

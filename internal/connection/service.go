@@ -82,8 +82,12 @@ func (s *ConnectionService) GetActiveSessions() ([]SessionSummary, error) {
 	return s.sessionManager.GetActiveSessions(), nil
 }
 
-func (s *ConnectionService) ExecuteQuery(sessionID string, query string) (QueryResult, error) {
-	return s.sessionManager.ExecuteQuery(sessionID, query)
+func (s *ConnectionService) ExecuteQuery(sessionID string, query string, limit int) (QueryResult, error) {
+	return s.sessionManager.ExecuteQuery(sessionID, query, limit)
+}
+
+func (s *ConnectionService) CancelQuery(sessionID string) error {
+	return s.sessionManager.CancelQuery(sessionID)
 }
 
 // --- Metadata Methods ---

@@ -1,27 +1,31 @@
 import React from 'react';
-import { Play, Download, Eraser } from 'lucide-react';
+import { Play, Download, Eraser, Square } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import styles from './sql-toolbar.module.css';
 import { LimitSelector } from './LimitSelector';
 
 interface SqlToolbarProps {
   onRun: () => void;
+  onStop: () => void;
   isExecuting: boolean;
   isDisabled?: boolean;
   limit: number;
   onLimitChange: (limit: number) => void;
   hasResults: boolean;
   onClear: () => void;
+  schema?: string;
 }
 
 export const SqlToolbar: React.FC<SqlToolbarProps> = ({ 
   onRun, 
+  onStop,
   isExecuting, 
   isDisabled,
   limit, 
   onLimitChange,
   hasResults,
-  onClear
+  onClear,
+  schema
 }) => {
   const { t } = useTranslation();
 
@@ -37,6 +41,16 @@ export const SqlToolbar: React.FC<SqlToolbarProps> = ({
           <Play size={14} fill="currentColor" /> 
           {t("app.editor.run", "Run")}
         </button>
+
+        <button 
+          onClick={onStop}
+          disabled={!isExecuting}
+          className={styles.stopBtn}
+          title={t("app.editor.stop_query", "Stop Execution")}
+        >
+          <Square size={14} fill="currentColor" /> 
+          {t("app.editor.stop", "Stop")}
+        </button>
         
         <div style={{ width: 1, height: 16, background: 'var(--border-subtle)', margin: '0 4px' }} />
         
@@ -48,10 +62,15 @@ export const SqlToolbar: React.FC<SqlToolbarProps> = ({
           <Eraser size={16} />
         </button>
 
-        {/* Placeholder for future buttons */}
-        {/* <button className={styles.iconButton}>
-            <Settings2 size={16} />
-        </button> */}
+        {schema && (
+          <>
+            <div style={{ width: 1, height: 16, background: 'var(--border-subtle)', margin: '0 4px' }} />
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, paddingLeft: 4 }}>
+              <span style={{ opacity: 0.7 }}>Schema:</span>
+              <span style={{ color: 'var(--text-main)', fontWeight: 500 }}>{schema}</span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={styles.rightGroup}>

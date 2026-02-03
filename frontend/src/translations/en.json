@@ -22,6 +22,7 @@
       "connecting": "Establishing Connection...",
       "connecting_detail": "Please wait while we initialize the session.",
       "disconnecting": "Disconnecting...",
+      "loading_schemas": "Loading database structure...",
       "loading_tables": "Loading database structure...",
       "new": {
         "title": "New Connection"
@@ -75,6 +76,8 @@
       "session_started": "Session Started",
       "run_query": "RUN QUERY",
       "run": "Run",
+      "stop_query": "Stop Execution",
+      "stop": "Stop",
       "clear": "Clear Query",
       "export": "Export Results",
       "limit": "Limit",

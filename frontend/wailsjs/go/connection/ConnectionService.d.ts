@@ -3,13 +3,15 @@
 import {connection} from '../models';
 import {context} from '../models';
 
+export function CancelQuery(arg1:string):Promise<void>;
+
 export function Connect(arg1:string):Promise<string>;
 
 export function DeleteProfile(arg1:string):Promise<void>;
 
 export function Disconnect(arg1:string):Promise<void>;
 
-export function ExecuteQuery(arg1:string,arg2:string):Promise<connection.QueryResult>;
+export function ExecuteQuery(arg1:string,arg2:string,arg3:number):Promise<connection.QueryResult>;
 
 export function GetActiveSessions():Promise<Array<connection.SessionSummary>>;
 

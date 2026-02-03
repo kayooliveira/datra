@@ -48,11 +48,45 @@ interface TabState {
   setActiveResultTab: (tabId: string, resultId: string) => void;
   setResultSelection: (tabId: string, resultId: string, selection: Record<string, boolean>) => void;
   clearTabs: () => void;
+  syncMainTabContext: (connectionId: string, connectionName?: string, profileId?: string) => void;
+  closeTabsByProfile: (profileId: string) => void;
 }
 
 export const useTabStore = create<TabState>((set, get) => ({
   tabs: [],
   activeTabId: null,
+
+  closeTabsByProfile: (profileId: string) => set((state) => {
+    // Keep main tab (even if bound to this profile, it will be updated or cleared separately)
+    // and tabs NOT belonging to this profile
+    const newTabs = state.tabs.filter((t) => 
+      t.id === MAIN_TAB_ID || t.profileId !== profileId
+    );
+    
+    // If active tab was removed, switch to main tab
+    let newActiveId = state.activeTabId;
+    if (state.activeTabId && !newTabs.find(t => t.id === state.activeTabId)) {
+      newActiveId = MAIN_TAB_ID;
+    }
+
+    return {
+      tabs: newTabs,
+      activeTabId: newActiveId,
+    };
+  }),
+
+  syncMainTabContext: (connectionId, connectionName, profileId) => set((state) => ({
+    tabs: state.tabs.map((tab) =>
+      tab.id === MAIN_TAB_ID
+        ? {
+            ...tab,
+            context: { connectionId },
+            connectionName,
+            profileId,
+          }
+        : tab
+    ),
+  })),
 
   initializeMainTab: (connectionId: string, connectionName?: string, profileId?: string) => {
     const state = get();

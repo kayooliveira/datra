@@ -7,11 +7,12 @@ interface SessionState {
     setIsCreatingConnection: (isCreating: boolean) => void;
     isConnectingSession: boolean;
     setIsConnectingSession: (isConnecting: boolean) => void;
-    activeContext: {
-        database?: string;
-        schema?: string;
-    } | null;
-    setActiveContext: (context: { database?: string; schema?: string } | null) => void;
+    
+    // Map sessionId -> Context
+    sessionContexts: Record<string, { database?: string; schema?: string }>;
+    setSessionContext: (sessionId: string, context: { database?: string; schema?: string } | null) => void;
+    
+    // Deprecated: activeContext (computed property helpers can be added if needed, but we'll remove it)
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -21,6 +22,19 @@ export const useSessionStore = create<SessionState>((set) => ({
     setIsCreatingConnection: (isCreating) => set({ isCreatingConnection: isCreating }),
     isConnectingSession: false,
     setIsConnectingSession: (isConnecting) => set({ isConnectingSession: isConnecting }),
-    activeContext: null,
-    setActiveContext: (context) => set({ activeContext: context }),
+    
+    sessionContexts: {},
+    setSessionContext: (sessionId, context) => set((state) => {
+        if (!context) {
+            const newContexts = { ...state.sessionContexts };
+            delete newContexts[sessionId];
+            return { sessionContexts: newContexts };
+        }
+        return {
+            sessionContexts: {
+                ...state.sessionContexts,
+                [sessionId]: { ...state.sessionContexts[sessionId], ...context }
+            }
+        };
+    }),
 }));

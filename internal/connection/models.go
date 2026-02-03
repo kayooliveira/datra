@@ -1,7 +1,9 @@
 package connection
 
 import (
+	"context"
 	"database/sql"
+	"sync"
 )
 
 type AuthMethod string
@@ -39,12 +41,15 @@ type Connection struct {
 
 // Session represents an active connection pool.
 type Session struct {
-	ID          string    `json:"id"`
-	ProfileID   string    `json:"profile_id"`
-	ProfileName string    `json:"profile_name"`
-	Status      string    `json:"status"` // connected, connecting, failed, disconnected
-	ConnectedAt string    `json:"connected_at"`
-	DB          *sql.DB   `json:"-"` // Internal connection pool, not exposed to FE
+	ID          string             `json:"id"`
+	ProfileID   string             `json:"profile_id"`
+	ProfileName string             `json:"profile_name"`
+	Status      string             `json:"status"` // connected, connecting, failed, disconnected
+	ConnectedAt string             `json:"connected_at"`
+	DB          *sql.DB            `json:"-"` // Internal connection pool, not exposed to FE
+	
+	mu          sync.Mutex         `json:"-"`
+	cancelFunc  context.CancelFunc `json:"-"`
 }
 
 // SessionSummary is a lightweight representation of a Session for the frontend.

@@ -18,6 +18,7 @@ import pkg from "../../package.json";
 import { useSessionStore } from "../stores/sessionStore";
 import { Toaster } from "sonner";
 import { SystemStatus } from "../components/status-bar/system-status";
+import { useSyncMainTabContext } from "../hooks/useSyncMainTabContext";
 
 export const Route = createRootRoute({
   component: () => (
@@ -34,6 +35,9 @@ function RootLayout() {
   const navigate = useNavigate();
   const { addItem, removeItem } = useStatusBar();
   const { setIsCreatingConnection } = useSessionStore();
+  
+  // Sync main tab context with active session
+  useSyncMainTabContext();
 
   const modifier = platformModifier === "Ctrl" ? "ctrl" : "meta";
 

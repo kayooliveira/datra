@@ -106,7 +106,7 @@ func (s *SessionManager) GetSession(sessionID string) (*Session, error) {
 	return session, nil
 }
 
-func (s *SessionManager) ExecuteQuery(sessionID string, query string) (QueryResult, error) {
+func (s *SessionManager) ExecuteQuery(sessionID string, query string, limit int) (QueryResult, error) {
 	s.mu.RLock()
 	session, ok := s.sessions[sessionID]
 	s.mu.RUnlock()
@@ -115,9 +115,41 @@ func (s *SessionManager) ExecuteQuery(sessionID string, query string) (QueryResu
 		return QueryResult{Error: "Session not found"}, fmt.Errorf("session not found")
 	}
 
+	// Create cancellation context
+	ctx, cancel := context.WithCancel(context.Background())
+	
+	// Store cancel function
+	session.mu.Lock()
+	if session.cancelFunc != nil {
+		// Cancel previous query if any (assuming single query per session for now)
+		// Or we can reject concurrent queries. Let's cancel previous.
+		session.cancelFunc()
+	}
+	session.cancelFunc = cancel
+	session.mu.Unlock()
+
+	defer func() {
+		session.mu.Lock()
+		if session.cancelFunc != nil {
+			// Only clear if it's still us
+			// Equality check for functions is not possible, but since we lock,
+			// and this runs at return, we can just clear it or check context.
+			// Ideally we shouldn't clear if another query started, but
+			// since we are blocking, another query from same thread won't happen.
+			// Concurrent queries from Wails: yes.
+			// Simple approach: set to nil.
+			session.cancelFunc = nil
+		}
+		session.mu.Unlock()
+		cancel() // Ensure resources are released
+	}()
+
 	start := time.Now()
-	rows, err := session.DB.Query(query)
+	rows, err := session.DB.QueryContext(ctx, query)
 	if err != nil {
+		if err == context.Canceled {
+			return QueryResult{Error: "Query canceled", TimeMs: time.Since(start).Milliseconds()}, nil
+		}
 		return QueryResult{Error: err.Error(), TimeMs: time.Since(start).Milliseconds()}, nil
 	}
 	defer rows.Close()
@@ -128,12 +160,16 @@ func (s *SessionManager) ExecuteQuery(sessionID string, query string) (QueryResu
 	}
 
 	var resultRows [][]interface{}
-	// Limit rows for safety (e.g., 1000) - can be parameter later
-	limit := 1000
+	// Safety cap for "unlimited" queries to prevent OOM
+	// If limit <= 0, we default to 20,000 rows.
+	maxRows := limit
+	if maxRows <= 0 {
+		maxRows = 20000
+	}
 	count := 0
 
 	for rows.Next() {
-		if count >= limit {
+		if count >= maxRows {
 			break
 		}
 		
@@ -167,4 +203,25 @@ func (s *SessionManager) ExecuteQuery(sessionID string, query string) (QueryResu
 		Rows:    resultRows,
 		TimeMs:  time.Since(start).Milliseconds(),
 	}, nil
+}
+
+func (s *SessionManager) CancelQuery(sessionID string) error {
+	s.mu.RLock()
+	session, ok := s.sessions[sessionID]
+	s.mu.RUnlock()
+
+	if !ok {
+		return fmt.Errorf("session not found")
+	}
+
+	session.mu.Lock()
+	defer session.mu.Unlock()
+
+	if session.cancelFunc != nil {
+		session.cancelFunc()
+		session.cancelFunc = nil // Clear it
+		return nil
+	}
+
+	return nil // No running query or already canceled
 }

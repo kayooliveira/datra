@@ -20,6 +20,8 @@ import styles from "./metadata-tree.module.css";
 
 interface MetadataTreeProps {
   sessionId: string;
+  onLoadStart?: () => void;
+  onLoadEnd?: () => void;
 }
 
 const ColumnList: React.FC<{
@@ -39,10 +41,17 @@ const ColumnList: React.FC<{
     return (
       <div className="pl-8 py-1 flex items-center gap-2 text-[var(--text-muted)] opacity-70">
         <Loader2 size={10} className="animate-spin" />
-        <span className="text-[10px] italic">{t("app.common.loading_columns")}</span>
+        <span className="text-[10px] italic">
+          {t("app.common.loading_columns")}
+        </span>
       </div>
     );
-  if (error) return <div className="pl-8 text-xs text-red-500 py-1">{t("app.common.error")}</div>;
+  if (error)
+    return (
+      <div className="pl-8 text-xs text-red-500 py-1">
+        {t("app.common.error")}
+      </div>
+    );
 
   return (
     <div>
@@ -76,7 +85,7 @@ const TableList: React.FC<{ sessionId: string; schema: string }> = ({
   const { data: tables, isLoading, error } = useTables(sessionId, schema, true);
   const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set());
   const { selectedId, selectItem } = useSelectionStore();
-  const { setActiveContext, setActiveSessionId } = useSessionStore();
+  const { setSessionContext, setActiveSessionId, activeSessionId } = useSessionStore();
   const { tabs, setActiveTab, activeTabId } = useTabStore();
 
   const toggleTable = (name: string, e: React.MouseEvent) => {
@@ -92,42 +101,32 @@ const TableList: React.FC<{ sessionId: string; schema: string }> = ({
     const id = `${sessionId}|${schema}|${name}`;
     selectItem(id, "table");
 
-    // Check if we need to switch to a different session/tab
-    // Find the main tab for this sessionId
-    const mainTabForSession = tabs.find(
-      (t) =>
-        t.id === MAIN_TAB_ID ||
-        (t.context.connectionId === sessionId && t.type === "main"),
-    );
-
-    // If no main tab exists for this session, or it's a different session, switch to it
-    const currentTab = tabs.find((t) => t.id === activeTabId);
-    if (currentTab?.context.connectionId !== sessionId) {
-      // Switch to the main tab of this session
-      if (mainTabForSession) {
-        setActiveTab(mainTabForSession.id);
-      } else {
-        // Activate the main tab (should always exist)
-        const mainTab = tabs.find((t) => t.id === MAIN_TAB_ID);
-        if (mainTab?.context.connectionId === sessionId) {
-          setActiveTab(MAIN_TAB_ID);
-        }
-      }
-      setActiveSessionId(sessionId);
+    // Check if we need to switch to a different connection
+    if (activeSessionId !== sessionId) {
+      setActiveSessionId(sessionId); // Triggers sync
+      // Ensure main tab is active to show the table
+      setActiveTab(MAIN_TAB_ID);
     }
 
-    // Update context for the current view
-    setActiveContext({ schema, database: undefined });
+    // Update active context (schema/database) for this session
+    setSessionContext(sessionId, { schema, database: undefined });
   };
 
   if (isLoading)
     return (
       <div className="pl-6 py-1 flex items-center gap-2 text-[var(--text-muted)] opacity-70">
         <Loader2 size={10} className="animate-spin" />
-        <span className="text-[10px] italic">{t("app.common.loading_tables")}</span>
+        <span className="text-[10px] italic">
+          {t("app.common.loading_tables")}
+        </span>
       </div>
     );
-  if (error) return <div className="pl-6 text-xs text-red-500 py-1">{t("app.common.error")}</div>;
+  if (error)
+    return (
+      <div className="pl-6 text-xs text-red-500 py-1">
+        {t("app.common.error")}
+      </div>
+    );
 
   return (
     <div>
@@ -170,14 +169,24 @@ const TableList: React.FC<{ sessionId: string; schema: string }> = ({
   );
 };
 
-export const MetadataTree: React.FC<MetadataTreeProps> = ({ sessionId }) => {
+export const MetadataTree: React.FC<MetadataTreeProps> = ({ sessionId, onLoadStart, onLoadEnd }) => {
   const { t } = useTranslation();
   const [expandedSchemas, setExpandedSchemas] = useState<Set<string>>(
     new Set(),
   );
   const { data: schemas, isLoading, error } = useSchemas(sessionId, true);
+
+  // Notify parent about loading state
+  React.useEffect(() => {
+    if (isLoading) {
+      onLoadStart?.();
+    } else {
+      onLoadEnd?.();
+    }
+  }, [isLoading, onLoadStart, onLoadEnd]);
+
   const { selectedId, selectItem } = useSelectionStore();
-  const { setActiveContext, setActiveSessionId } = useSessionStore();
+  const { setSessionContext, setActiveSessionId, activeSessionId } = useSessionStore();
   const { tabs, setActiveTab, activeTabId } = useTabStore();
 
   const toggleSchema = (name: string, e: React.MouseEvent) => {
@@ -193,18 +202,14 @@ export const MetadataTree: React.FC<MetadataTreeProps> = ({ sessionId }) => {
     const id = `${sessionId}|${name}`;
     selectItem(id, "schema");
 
-    // Check if we need to switch to a different session/tab
-    const currentTab = tabs.find((t) => t.id === activeTabId);
-    if (currentTab?.context.connectionId !== sessionId) {
-      // Switch to the main tab of this session
-      const mainTab = tabs.find((t) => t.id === MAIN_TAB_ID);
-      if (mainTab?.context.connectionId === sessionId) {
-        setActiveTab(MAIN_TAB_ID);
-      }
+    if (activeSessionId !== sessionId) {
       setActiveSessionId(sessionId);
+      // Ensure main tab is active when switching sessions
+      setActiveTab(MAIN_TAB_ID);
     }
-
-    setActiveContext({ schema: name });
+    
+    // Set schema context for this specific session
+    setSessionContext(sessionId, { schema: name });
 
     try {
       // Fetch session to determine driver
@@ -231,13 +236,17 @@ export const MetadataTree: React.FC<MetadataTreeProps> = ({ sessionId }) => {
     return (
       <div className={styles.loadingContainer}>
         <Loader2 size={16} className={styles.loadingSpinner} />
-        <span className={styles.loadingText}>{t("app.common.loading_schemas")}</span>
+        <span className={styles.loadingText}>
+          {t("app.common.loading_schemas")}
+        </span>
       </div>
     );
   if (error)
     return (
       <div className={styles.errorContainer}>
-        <span className={styles.errorText}>{t("app.common.error_loading_schemas")}</span>
+        <span className={styles.errorText}>
+          {t("app.common.error_loading_schemas")}
+        </span>
       </div>
     );
 

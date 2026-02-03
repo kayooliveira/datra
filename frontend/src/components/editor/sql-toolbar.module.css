@@ -40,6 +40,33 @@
   filter: grayscale(1);
 }
 
+.stopBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--danger, #f44336);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stopBtn:hover:not(:disabled) {
+  background-color: var(--bg-hover);
+  border-color: var(--border-subtle);
+  opacity: 0.9;
+}
+
+.stopBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
 .iconButton {
   display: flex;
   align-items: center;

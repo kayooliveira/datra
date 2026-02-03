@@ -8,7 +8,7 @@ import styles from "./sidebar.module.css";
 import { useProfiles } from "../../hooks/useConnections";
 import { Connect } from "../../../wailsjs/go/connection/ConnectionService";
 import { useSessionStore } from "../../stores/sessionStore";
-import { useTabStore } from "../../stores/tabStore";
+import { useTabStore, MAIN_TAB_ID } from "../../stores/tabStore";
 
 interface SidebarProps {
   className?: string;
@@ -21,15 +21,21 @@ export function Sidebar({ className = "" }: SidebarProps) {
   const { platformModifier } = useSettings();
   const { activeSessionId, setActiveSessionId, setIsConnectingSession } =
     useSessionStore();
-  const { initializeMainTab } = useTabStore();
+  const { initializeMainTab, tabs } = useTabStore();
 
   const handleSelectConnection = async (id: string) => {
     setIsConnectingSession(true);
     try {
       const sessionId = await Connect(id);
       setActiveSessionId(sessionId);
+      
       const connection = connections.find((c) => c.id === id);
-      initializeMainTab(sessionId, connection?.name, id);
+      const mainTab = tabs.find((t) => t.id === MAIN_TAB_ID);
+      
+      if (!mainTab) {
+        initializeMainTab(sessionId, connection?.name, id);
+      }
+      
       navigate({ to: "/" });
     } catch (err) {
       console.error("Failed to connect from sidebar:", err);
